@@ -1,0 +1,254 @@
+{
+
+  "keys" : [
+    "navigation.magneticVariation",
+    "navigation.headingTrue",
+    "navigation.courseOverGroundMagnetic",
+    "navigation.headingMagnetic",
+    "environment.wind.speedApparent",
+    "environment.wind.angleApparent",
+    "environment.wind.angleTrueWater",
+    "environment.wind.speedTrue",
+    "performance.leeway",
+    "navigation.speedThroughWater",
+    "performance.polarSpeed",
+    "performance.polarSpeedRatio",
+    "performance.polarVmg",
+    "performance.targetTwa",
+    "performance.targetStw",
+    "performance.targetVmg",
+    "performance.polarVmgRatio",
+    "environment.wind.windDirectionTrue",
+    "environment.wind.windDirectionMagnetic",
+    "performance.oppositeTrackTrue",
+    "performance.oppositeTrackMagnetic",
+    "performance.oppositeHeadingMagnetic",
+    "navigation.courseOverGroundTrue",
+    "performance.vmg",
+    "navigation.trip.log",
+    "navigation.log",
+    "navigation.datetime",
+    "navigation.gnss",
+    "steering.autopilot",
+    "navigation.position",
+    "environment.current",
+    "navigation.attitude"
+    ]
+  ,
+  "pages" : [
+    {
+      "id": "page1",
+      "instruments" : [
+        {
+          "type": "EInkTextBox",
+          "options": {
+            "labels" : {
+              "bl":"aws1",
+              "br": "kn"
+            }
+
+          },
+          "sources": [
+            "environment.wind.speedApparent"
+          ]
+        },
+        {
+          "type": "EInkTextBox",
+          "options": {
+            "labels" : {
+              "bl":"awa2",
+              "br": "deg"
+            }
+
+          },
+          "sources": [
+            "environment.wind.angleApparent"
+          ]
+        },
+        {
+          "type": "EInkTextBox",
+          "options": {
+            "labels" : {
+              "bl":"twa3",
+              "br": "deg"
+            }
+
+          },
+          "sources": [
+            "environment.wind.angleTrueWater"
+          ]
+        },
+        {
+          "type": "EInkTextBox",
+          "options": {
+            "labels" : {
+              "bl":"tws4",
+              "br": "kn"
+            }
+
+          },
+          "sources": [
+            "environment.wind.speedTrue"
+          ]
+        },
+        {
+          "type": "EInkTextBox",
+          "options": {
+            "labels" : {
+              "bl":"stw5",
+              "br": "kn"
+            }
+
+          },
+          "sources": [
+            "navigation.speedThroughWater"
+          ]
+        },
+        {
+          "type": "EInkTextBox",
+          "options": {
+            "labels" : {
+              "bl":"awa6",
+              "br": "deg"
+            }
+
+          },
+          "sources": [
+            "environment.wind.angleApparent"
+          ]
+        },
+        {
+          "type": "EInkTextBox",
+          "options": {
+            "labels" : {
+              "bl":"twa7",
+              "br": "deg"
+            }
+
+          },
+          "sources": [
+            "environment.wind.angleTrueWater"
+          ]
+        },
+        {
+          "type": "EInkTextBox",
+          "options": {
+            "labels" : {
+              "bl":"tws8",
+              "br": "kn"
+            }
+
+          },
+          "sources": [
+            "environment.wind.speedTrue"
+          ]
+        },
+        {
+          "type": "EInkTextBox",
+          "options": {
+            "labels" : {
+              "bl":"aws9",
+              "br": "kn"
+            }
+
+          },
+          "sources": [
+            "environment.wind.speedApparent"
+          ]
+        },
+        {
+          "type": "EInkTextBox",
+          "options": {
+            "labels" : {
+              "bl":"awa10",
+              "br": "deg"
+            }
+
+          },
+          "sources": [
+            "environment.wind.angleApparent"
+          ]
+        },
+        {
+          "type": "EInkTextBox",
+          "options": {
+            "labels" : {
+              "bl":"twa11",
+              "br": "deg"
+            }
+
+          },
+          "sources": [
+            "environment.wind.angleTrueWater"
+          ]
+        },
+        {
+          "type": "EInkTextBox",
+          "options": {
+            "labels" : {
+              "bl":"tws12",
+              "br": "kn"
+            }
+
+          },
+          "sources": [
+            "environment.wind.speedTrue"
+          ]
+        },
+        {
+          "type": "EInkTextBox",
+          "options": {
+            "labels" : {
+              "bl":"stw13",
+              "br": "kn"
+            }
+
+          },
+          "sources": [
+            "navigation.speedThroughWater"
+          ]
+        },
+        {
+          "type": "EInkTextBox",
+          "options": {
+            "labels" : {
+              "bl":"awa14",
+              "br": "deg"
+            }
+
+          },
+          "sources": [
+            "environment.wind.angleApparent"
+          ]
+        },
+        {
+          "type": "EInkTextBox",
+          "options": {
+            "labels" : {
+              "bl":"twa15",
+              "br": "deg"
+            }
+
+          },
+          "sources": [
+            "environment.wind.angleTrueWater"
+          ]
+        },
+        {
+          "type": "EInkTextBox",
+          "options": {
+            "labels" : {
+              "bl":"tws16",
+              "br": "kn"
+            }
+
+          },
+          "sources": [
+            "environment.wind.speedTrue"
+          ]
+        }
+      ]
+    }
+
+  ]
+}

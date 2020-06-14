@@ -1,0 +1,253 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>uk.co.tfd</groupId>
+  <artifactId>uk.co.tfd.kindle.signalk</artifactId>
+  <packaging>jar</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <name>uk.co.tfd.kindle.signalk</name>
+  <url>http://github.com/ieb/Signalk_Booklet</url>
+  <properties>
+    <timestamp>${maven.build.timestamp}</timestamp>
+    <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
+  </properties>
+  <scm>
+    <connection>scm:git:git://github.com/ieb/Signalk_Booklet.git</connection>
+  </scm>
+
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/filtered</directory>
+        <filtering>true</filtering>
+      </resource>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+    </resources>
+    <finalName>signalk_booklet</finalName>
+    <plugins>
+
+      <!-- download source code in Eclipse, best practice -->
+
+      <!-- Set a JDK compiler level -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.0</version>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+        </configuration>
+      </plugin>
+
+      <!-- Make this jar executable -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.1.1</version>
+        <configuration>
+          <!-- DO NOT include log4j.properties file in your Jar -->
+          <excludes>
+            <exclude>**/log4j.properties</exclude>
+          </excludes>
+          <archive>
+            <manifest>
+              <!-- Jar file entry point -->
+              <mainClass>uk.co.tfd.kindle.signalk.Main</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+
+
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>3.1.0</version>
+        <executions>
+          <execution>
+            <id>copy-kindle-install</id>
+            <phase>install</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+
+            <configuration>
+              <outputDirectory>${project.build.directory}/booklet/install</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>src/kindle/install</directory>
+                  <includes>
+                    <include>*.*</include>
+                  </includes>
+                </resource>
+                <resource>
+                  <directory>src/kindle</directory>
+                  <includes>
+                    <include>libotautils5</include>
+                  </includes>
+                </resource>
+                <resource>
+                  <directory>${project.build.directory}</directory>
+                  <includes>
+                    <include>signalk_booklet.jar</include>
+                  </includes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+          <execution>
+            <id>copy-kindle-uninstall</id>
+            <phase>install</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+
+            <configuration>
+              <outputDirectory>${project.build.directory}/booklet/uninstall</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>src/kindle/uninstall</directory>
+                  <includes>
+                    <include>*.*</include>
+                  </includes>
+                </resource>
+                <resource>
+                  <directory>src/kindle</directory>
+                  <includes>
+                    <include>libotautils5</include>
+                  </includes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+
+      <!-- package into install bundles -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.5.0</version>
+        <executions>
+          <execution>
+            <id>kindletool.install</id>
+            <phase>install</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>kindletool</executable>
+              <workingDirectory>${pom.build.directory}</workingDirectory>
+
+              <commandlineArgs>create ota2 -xPackageName=${project.artifactId}
+                -xPackageVersion=${project.version}_${buildNumber}
+                -xPackageAuthor=ieb -xPackageMaintainer=ieb -X
+                -d kindle5 -s 1679530004
+                -C ${project.build.directory}/booklet/install
+                ${project.build.directory}/Update_Signalk_${project.artifactId}_${buildNumber}_install.bin
+              </commandlineArgs>
+
+            </configuration>
+          </execution>
+          <execution>
+            <id>kindletool.hotfix</id>
+            <phase>install</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>kindletool</executable>
+              <workingDirectory>${project.build.outputDirectory}</workingDirectory>
+              <commandlineArgs>create ota2 -d paperwhite2 -d basic -d voyage -d paperwhite3
+                -d oasis -d basic2 -d oasis2 -d paperwhite4 -d basic3
+                -d oasis3 -O -s 3556150002 -C ${project.build.directory}/booklet/install
+                ${project.build.directory}/Update_Signalk_${project.artifactId}_hotfix_${buildNumber}_install.bin
+              </commandlineArgs>
+            </configuration>
+          </execution>
+          <execution>
+            <id>kindletool.uninstall</id>
+            <phase>install</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>kindletool</executable>
+              <workingDirectory>${project.build.outputDirectory}</workingDirectory>
+              <commandlineArgs>create ota2 -xPackageName=${project.artifactId}
+                -xPackageVersion=${project.version}_${buildNumber} -xPackageAuthor=ieb
+                -xPackageMaintainer=ieb -X -d kindle5
+                -C ${project.build.directory}/booklet/uninstall
+                ${project.build.directory}/Update_Signalk_${project.artifactId}_${buildNumber}_uninstall.bin
+              </commandlineArgs>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+
+
+    <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>buildnumber-maven-plugin</artifactId>
+        <version>1.4</version>
+        <executions>
+          <execution>
+            <phase>validate</phase>
+            <goals>
+              <goal>create</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <doCheck>false</doCheck>
+          <doUpdate>false</doUpdate>
+          <shortRevisionLength>5</shortRevisionLength>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.12</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- the following come from your Kindle.
+         You must login over ssh and copy the jars to build.
+         Some Kindle firmware has a busybox ssh shell that can be enabled with ;un, otherwise
+         you will have to find an alternative way of getting hold of the libraries, sorry these cant
+         be distributed. -->
+    <dependency>
+      <groupId>kindle-sdk</groupId>
+      <artifactId>json_simple</artifactId>
+      <version>1.1</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/opt_amazon_ebook/lib/json_simple-1.1.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>kindle-sdk</groupId>
+      <artifactId>concierge</artifactId>
+      <version>1.0.0</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/opt_amazon_ebook/lib/concierge-1.0.0.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>kindle-sdk</groupId>
+      <artifactId>kaf</artifactId>
+      <version>1.0.0</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/opt_amazon_ebook/lib/kaf.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>kindle-sdk</groupId>
+      <artifactId>utilities</artifactId>
+      <version>1.0.0</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/opt_amazon_ebook/lib/utilities.jar</systemPath>
+    </dependency>
+  </dependencies>
+</project>
