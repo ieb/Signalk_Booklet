@@ -172,14 +172,29 @@ public class Util {
         for (int i = 0; i < elements.length-1; i++) {
             if ( o instanceof Map) {
                 Map<Object, String> m = (Map<Object, String>) o;
-                o = (T) m.get(elements[i]);
+                o = m.get(elements[i]);
             } else {
                 return defaultValue;
             }
         }
         if ( o instanceof Map) {
             Map<Object, String> m = (Map<Object, String>) o;
-            return (T) m.get(elements[elements.length - 1]);
+			o = m.get(elements[elements.length - 1]);
+            if ( o == null ) {
+                return defaultValue;
+            } else if (defaultValue == null) {
+                return (T) o;
+            } else if ( defaultValue.getClass().isAssignableFrom(o.getClass())) {
+				return (T) o;
+			} else if ( defaultValue instanceof String ) {
+				return (T) String.valueOf(o);
+			} else if ( defaultValue instanceof Long ) {
+				return (T) Long.valueOf(String.valueOf(o));
+			} else if ( defaultValue instanceof  Double ) {
+				return (T) Double.valueOf(String.valueOf(o));
+			} else {
+				throw new IllegalArgumentException("Unable to resolve "+o.getClass()+" to "+defaultValue.getClass()+" from "+path);
+			}
         } else {
             return defaultValue;
         }

@@ -19,6 +19,8 @@ public class EInkAttitude extends EInkTextBox {
 
     private String pitch = "-";
     private String roll = "-";
+    private DecimalFormat pitchDataFormat = new DecimalFormat("A0.0\u00B0;F0.0\u00B0");
+    private DecimalFormat rollDataFormat = new DecimalFormat("S0.0\u00B0;P0.0\u00B0");
 
     public EInkAttitude(boolean rotate, Map<String, Object> options, Data.DisplayUnits displayUnits) {
         super(rotate, updateOptions(options), displayUnits );
@@ -30,7 +32,6 @@ public class EInkAttitude extends EInkTextBox {
         labels.put("br","deg");
         options.put("labels",labels);
         options.put("dataType", Data.DataType.RELATIVEANGLE);
-        options.put("dataFormat", new DecimalFormat("0.0 \u00B0"));
         return options;
     }
 
@@ -40,8 +41,8 @@ public class EInkAttitude extends EInkTextBox {
         if (Data.DataKey.NAVIGATION_ATTITUDE.equals(data.key)) {
             if ( data instanceof AttitudeDataValue) {
                 AttitudeDataValue attitudeData = (AttitudeDataValue) data;
-                String newPitch = "pitch: " + this.displayUnits.toDispay(attitudeData.getPitch(), dataFormat, dataType);
-                String newRoll =  "roll:" + this.displayUnits.toDispay(attitudeData.getRoll(), dataFormat, dataType);
+                String newPitch = "pitch: " + this.displayUnits.toDispay(attitudeData.getPitch(), pitchDataFormat, Data.DataType.RELATIVEANGLE);
+                String newRoll =  "roll:" + this.displayUnits.toDispay(attitudeData.getRoll(), rollDataFormat, Data.DataType.RELATIVEANGLE);
                 if ( !newPitch.equals(pitch) || !newRoll.equals(roll)) {
                     pitch = newPitch;
                     roll = newRoll;

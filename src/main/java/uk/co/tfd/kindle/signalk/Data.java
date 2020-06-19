@@ -1,6 +1,10 @@
 package uk.co.tfd.kindle.signalk;
 
 
+import javax.swing.*;
+import javax.swing.Timer;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -12,7 +16,7 @@ import java.util.*;
 public class Data {
     
     public enum Unit {
-        RAD, MS, RATIO,M, MAP, TEXT
+        RAD, MS, RATIO,M, MAP, K, TEXT
     }
 
     public enum DataType {
@@ -21,47 +25,60 @@ public class Data {
     }
 
     public enum DataKey {
-        NAVIGATION_MAGNETIC_VARIATION("navigation.magneticVariation",Unit.RAD,"Magnetic Variation"),
-        NAVIGATION_HEADING_TRUE("navigation.headingTrue",Unit.RAD,""),
-        NAVIGATION_COURSE_OVER_GROUND_MAGNETIC("navigation.courseOverGroundMagnetic",Unit.RAD,""),
-        NAVIGATION_HEADING_MAGNETIC("navigation.headingMagnetic",Unit.RAD,""),
-        ENVIRONMENT_WIND_SPEED_APPARENT("environment.wind.speedApparent",Unit.MS,""),
-        ENVIRONMENT_WIND_ANGLE_APPARENT("environment.wind.angleApparent",Unit.RAD,""),
-        ENVIRONMENT_WIND_ANGLE_TRUE_WATER("environment.wind.angleTrueWater",Unit.RAD,""),
-        ENVIRONMENT_WIND_SPEED_TRUE("environment.wind.speedTrue",Unit.MS,""),
-        PERFORMANCE_LEEWAY("performance.leeway",Unit.RAD,""),
-        NAVIGATION_SPEED_THROUGH_WATER("navigation.speedThroughWater",Unit.MS,""),
-        PERFORMANCE_POLAR_SPEED("performance.polarSpeed",Unit.MS,""),
-        PERFORMANCE_POLAR_SPEED_RATIO("performance.polarSpeedRatio",Unit.RATIO,""),
-        PERFORMANCE_POLAR_VMG("performance.polarVmg",Unit.MS,""),
-        PERFORMANCE_TARGET_TWA("performance.targetTwa",Unit.RAD,""),
-        PERFORMANCE_TARGET_STW("performance.targetStw",Unit.MS,""),
-        PERFORMANCE_TARGET_VMG("performance.targetVmg",Unit.MS,""),
-        PERFORMANCE_POLAR_VMG_RATIO("performance.polarVmgRatio",Unit.RATIO,""),
-        ENVIRONMENT_WIND_WIND_DIRECTION_TRUE("environment.wind.windDirectionTrue",Unit.RAD,""),
-        ENVIRONMENT_WIND_WIND_DIRECTION_MAGNETIC("environment.wind.windDirectionMagnetic",Unit.RAD,""),
-        PERFORMANCE_OPPOSITE_TRACK_TRUE("performance.oppositeTrackTrue",Unit.RAD,""),
-        PERFORMANCE_OPPOSITE_TRACK_MAGNETIC("performance.oppositeTrackMagnetic",Unit.RAD,""),
-        PERFORMANCE_OPPOSITE_HEADING_MAGNETIC("performance.oppositeHeadingMagnetic",Unit.RAD,""),
-        NAVIGATION_COURSE_OVER_GROUND_TRUE("navigation.courseOverGroundTrue",Unit.RAD,""),
-        PERFORMANCE_VMG("performance.vmg", Unit.MS, "current vmg at polar speed"),
-        NAVIGATION_TRIP_LOG("navigation.trip.log", Unit.M, "Trip"),
-        NAVIGATION_LOG("navigation.log", Unit.M, "Log"),
-        NAVIGATION_DATETIME("navigation.datetime",Unit.TEXT,"Navigation time"),
-        NAVIGATION_GNSS("navigation.gnss", Unit.MAP, "GPS Status"),
-        STEERING_AUTOPILOT("steering.autopilot", Unit.MAP, "Auto pilot data"),
-        NAVIGATION_POSITION("navigation.position",Unit.MAP,"Lat Long"),
-        ENVIRONMENT_CURRENT("environment.current",Unit.MAP,"Set Drift"),
-        NAVIGATION_ATTITUDE("navigation.attitude",Unit.MAP,"Pitch Roll")
 
+
+
+
+
+        NAVIGATION_MAGNETIC_VARIATION("navigation.magneticVariation",Unit.RAD, DataType.BEARING, "Magnetic Variation"),
+        NAVIGATION_HEADING_TRUE("navigation.headingTrue",Unit.RAD, DataType.BEARING, ""),
+        NAVIGATION_COURSE_OVER_GROUND_MAGNETIC("navigation.courseOverGroundMagnetic",Unit.RAD,DataType.BEARING, ""),
+        NAVIGATION_HEADING_MAGNETIC("navigation.headingMagnetic",Unit.RAD,DataType.BEARING, ""),
+        ENVIRONMENT_WIND_SPEED_APPARENT("environment.wind.speedApparent",Unit.MS,DataType.SPEED,""),
+        ENVIRONMENT_WIND_ANGLE_APPARENT("environment.wind.angleApparent",Unit.RAD,DataType.RELATIVEANGLE, ""),
+        ENVIRONMENT_WIND_ANGLE_TRUE_WATER("environment.wind.angleTrueWater",Unit.RAD,DataType.RELATIVEANGLE,""),
+        ENVIRONMENT_WIND_SPEED_TRUE("environment.wind.speedTrue",Unit.MS,DataType.SPEED,""),
+        PERFORMANCE_LEEWAY("performance.leeway",Unit.RAD,DataType.RELATIVEANGLE,""),
+        NAVIGATION_SPEED_THROUGH_WATER("navigation.speedThroughWater",Unit.MS,DataType.SPEED,""),
+        PERFORMANCE_POLAR_SPEED("performance.polarSpeed",Unit.MS,DataType.SPEED,""),
+        PERFORMANCE_POLAR_SPEED_RATIO("performance.polarSpeedRatio",Unit.RATIO,DataType.PERCENTAGE,""),
+        PERFORMANCE_POLAR_VMG("performance.polarVmg",Unit.MS,DataType.SPEED,""),
+        PERFORMANCE_TARGET_TWA("performance.targetTwa",Unit.RAD,DataType.RELATIVEANGLE,""),
+        PERFORMANCE_TARGET_STW("performance.targetStw",Unit.MS,DataType.SPEED,""),
+        PERFORMANCE_TARGET_VMG("performance.targetVmg",Unit.MS,DataType.SPEED,""),
+        PERFORMANCE_POLAR_VMG_RATIO("performance.polarVmgRatio",Unit.RATIO,DataType.PERCENTAGE,""),
+        ENVIRONMENT_WIND_WIND_DIRECTION_TRUE("environment.wind.windDirectionTrue",Unit.RAD,DataType.BEARING,""),
+        ENVIRONMENT_WIND_WIND_DIRECTION_MAGNETIC("environment.wind.windDirectionMagnetic",Unit.RAD,DataType.BEARING,""),
+        PERFORMANCE_OPPOSITE_TRACK_TRUE("performance.oppositeTrackTrue",Unit.RAD,DataType.BEARING,""),
+        PERFORMANCE_OPPOSITE_TRACK_MAGNETIC("performance.oppositeTrackMagnetic",Unit.RAD,DataType.BEARING,""),
+        PERFORMANCE_OPPOSITE_HEADING_MAGNETIC("performance.oppositeHeadingMagnetic",Unit.RAD,DataType.BEARING,""),
+        NAVIGATION_COURSE_OVER_GROUND_TRUE("navigation.courseOverGroundTrue",Unit.RAD,DataType.BEARING,""),
+        PERFORMANCE_VMG("performance.vmg", Unit.MS,DataType.SPEED, "current vmg at polar speed"),
+        NAVIGATION_TRIP_LOG("navigation.trip.log", Unit.M, DataType.DISTANCE,"Trip"),
+        NAVIGATION_LOG("navigation.log", Unit.M, DataType.DISTANCE,"Log"),
+        NAVIGATION_DATETIME("navigation.datetime",Unit.TEXT,DataType.NONE,"Navigation time"),
+        NAVIGATION_GNSS("navigation.gnss", Unit.MAP, DataType.NONE,"GPS Status"),
+        STEERING_AUTOPILOT("steering.autopilot", Unit.MAP, DataType.NONE, "Auto pilot data"),
+        NAVIGATION_POSITION("navigation.position",Unit.MAP,DataType.NONE,"Lat Long"),
+        ENVIRONMENT_CURRENT("environment.current",Unit.MAP,DataType.NONE,"Set Drift"),
+        NAVIGATION_ATTITUDE("navigation.attitude",Unit.MAP,DataType.NONE,"Pitch Roll"),
+        NAVIGATION_RATEOFTURN("navigation.rateOfTurn",Unit.RAD,DataType.RELATIVEANGLE,"Rate of turn, radians/s"),
+        STEERING_RUDDERANGLE("steering.rudderAngle",Unit.RAD,DataType.RELATIVEANGLE,"Rudder angle"),
+        NAVIGATION_SPEEDOVERGROUND("navigation.speedOverGround",Unit.MS,DataType.SPEED,"Sog"),
+        ENVIRONMENT_WATER_TEMPERATURE("environment.water.temperature",Unit.K,DataType.TEMPERATURE,"Water Temperature"),
+        NAVIGATION_SPEEDTHROUGHWATERREFERENCETYPE("navigation.speedThroughWaterReferenceType",Unit.TEXT,DataType.NONE,"Sensor Type"),
+        ENVIRONMENT_DEPTH_BELOWTRANSDUCER("environment.depth.belowTransducer",Unit.M,DataType.DEPTH,"Depth")
         ;
-        private final String id;
-        private final Unit units;
-        private final String description;
-        private DataKey(String id, Unit units, String description) {
+        public final String id;
+        public final Unit units;
+        public final String description;
+        public final DataType type;
+
+        private DataKey(String id, Unit units, DataType type, String description) {
             this.id = id;
             this.units = units;
             this.description = description;
+            this.type = type;
         }
 
         public static DataKey get(String id) {
@@ -72,7 +89,6 @@ public class Data {
             }
             return null;
         }
-
 
         @Override
         public String toString() {
@@ -267,6 +283,7 @@ public class Data {
             if ( conversions.containsKey(dataType) ) {
                 return conversions.get(dataType).convert(value, format);
             }
+            System.err.println("Conversion Not found for data type "+dataType+" "+value);
             return format.format(value);
         }
     }
@@ -299,16 +316,51 @@ public class Data {
 
     public static class Store extends Observable {
         Map<String, DataValue> state = new HashMap<String, DataValue>();
+        private Timer timer;
 
         public Store() {
+
             loadStore();
+            timer = new Timer(1000, new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    calcStats();
+                }
+            });
+
         }
+
+
 
 
         private void loadStore() {
             // special mappings.
-            state.put(DataKey.NAVIGATION_GNSS.toString(), new FixDataValue(DataKey.NAVIGATION_GNSS));
-            state.put(DataKey.STEERING_AUTOPILOT.toString(), new PilotDataValue(DataKey.STEERING_AUTOPILOT));
+
+                    /*
+                steering.autopilot.state
+        steering.autopilot.target.headingMagnetic
+        navigation.gnss.methodQuality
+        navigation.gnss.type
+        navigation.gnss.horizontalDilution
+        navigation.gnss.satellites
+
+         */
+
+            state.put(DataKey.NAVIGATION_SPEEDTHROUGHWATERREFERENCETYPE.toString(), new DataValue(DataKey.NAVIGATION_SPEEDTHROUGHWATERREFERENCETYPE));
+            DataValue fixDataValue = new FixDataValue(DataKey.NAVIGATION_GNSS);
+            state.put(DataKey.NAVIGATION_GNSS.toString(), fixDataValue);
+            state.put(DataKey.NAVIGATION_GNSS.toString()+".methodQuality", fixDataValue);
+            state.put(DataKey.NAVIGATION_GNSS.toString()+".type", fixDataValue);
+            state.put(DataKey.NAVIGATION_GNSS.toString()+".horizontalDilution", fixDataValue);
+            state.put(DataKey.NAVIGATION_GNSS.toString()+".satellites", fixDataValue);
+            state.put(DataKey.NAVIGATION_GNSS.toString()+".integrity", fixDataValue);
+
+            PilotDataValue pilotDataValue = new PilotDataValue(DataKey.STEERING_AUTOPILOT);
+            state.put(DataKey.STEERING_AUTOPILOT.toString(), pilotDataValue);
+            state.put(DataKey.STEERING_AUTOPILOT.toString()+".state", pilotDataValue);
+            state.put(DataKey.STEERING_AUTOPILOT.toString()+".target.headingMagnetic", pilotDataValue);
+
+
             state.put(DataKey.NAVIGATION_DATETIME.toString(), new DataValue(DataKey.NAVIGATION_DATETIME));
             state.put(DataKey.NAVIGATION_POSITION.toString(), new PossitionDataValue((DataKey.NAVIGATION_POSITION)));
             state.put(DataKey.ENVIRONMENT_CURRENT.toString(), new CurrentDataValue((DataKey.ENVIRONMENT_CURRENT)));
@@ -354,6 +406,31 @@ public class Data {
             }
         }
 
+
+        public void updateFromServer(Map<String, Object> value) {
+            String path = (String) value.get("path");
+            if ( path != null ) {
+                DataValue dataValue = state.get(path);
+                if ( dataValue == null ) {
+                    System.err.println("Ignoring "+path+" "+value);
+                } else {
+                    dataValue.update(value);
+                }
+            }
+        }
+
+        public void calcStats() {
+            for(Map.Entry<String, DataValue> e : state.entrySet()) {
+                e.getValue().calcStats();
+            }
+        }
+
+        public void start() {
+            timer.start();
+        }
+        public void stop() {
+            timer.stop();
+        }
     }
 
 
@@ -387,7 +464,9 @@ public class Data {
         public void updateTimestamp(String dateString) {
             SimpleDateFormat df = new SimpleDateFormat("yyy-MM-dd'T'hh:mm:ss.SSS");
             try {
+
                 if ( dateString == null) {
+                    System.err.println("updateTimestamp() No timestamp found");
                     this.timestamp = System.currentTimeMillis();
                 } else {
                     this.timestamp = df.parse(dateString).getTime();
@@ -402,10 +481,16 @@ public class Data {
 
 
         public void update(Map<String, Object> input) {
-            updateTimestamp((String)input.get("timestamp"));
-            this.text = String.valueOf(Util.resolve(input, "value", ""));
+            updateTimestamp((String) input.get("timestamp"));
+            String newValue = String.valueOf(Util.resolve(input, "value", this.text));
+            if ( "".equals(newValue) ) {
+                System.err.println("update() No text value found");
+            }
             this.source = "input";
-            this.fireUpdate();
+            if ( !newValue.equals(this.text) ) {
+                this.text = newValue;
+                this.fireUpdate();
+            }
         }
         public void update(String v, long ts) {
             this.text = v;
@@ -414,8 +499,11 @@ public class Data {
             this.fireUpdate();
         }
 
-        boolean isEmpty() {
-            return "empty".equals(this.source);
+        public void calcStats() {
+        }
+
+            public boolean isInput() {
+            return "input".equals(this.source);
         }
 
         public String getText() {
@@ -440,6 +528,10 @@ public class Data {
             return 0;
         }
 
+        public DataKey getKey() {
+            return key;
+        }
+
     }
 
     public static class DoubleDataValue extends DataValue {
@@ -451,6 +543,8 @@ public class Data {
         protected double stdev;
         protected double min;
         protected double max;
+        private long change = 0;
+        private long nochange = 0;
 
         public double getValue() {
             return value;
@@ -481,25 +575,33 @@ public class Data {
         public void update(Map<String, Object> input) {
             updateTimestamp((String) input.get("timestamp"));
             Object o = Util.resolve(input,"value", null);
+            double newValue = 0;
             if ( o instanceof Long) {
-                this.value = (1.0*(long)o);
+                newValue = (1.0*(long)o);
             } else if ( o instanceof Double ) {
-                this.value = (double) o;
+                newValue = (double) o;
             } else {
-                this.value = 0;
+                System.err.println("Value not recognised in datavalue update "+input.get("value"));
+                newValue = 0;
             }
-            this.calcStats();
-            this.fireUpdate();
+            if ( newValue != this.value) {
+                this.value = newValue;
+                this.fireUpdate();
+                change++;
+            } else {
+                nochange++;
+            }
         }
 
         public void update(double v, long ts) {
             this.value = v;
             this.timestamp = ts;
             this.source = "calculated";
-            this.calcStats();
             this.fireUpdate();
         }
-        protected void calcStats() {
+
+        @Override
+        public void calcStats() {
             this.values[ilast] = this.value;
             ilast = (ilast+1)%100;
             if (ifirst == ilast ) {
@@ -583,7 +685,7 @@ public class Data {
             super(k);
         }
         @Override
-        protected void calcStats() {
+        public void calcStats() {
 
             this.values[ilast] = this.value;
             this.sinvalues[ilast] = Math.sin(this.value);
@@ -686,8 +788,8 @@ public class Data {
 
     public static class PilotDataValue extends DataValue {
 
-        private String state;
-        private double heading;
+        private String state = "-";
+        private double heading = 0.0;
 
         public PilotDataValue(DataKey k) {
             super(k);
@@ -695,9 +797,24 @@ public class Data {
 
         public void update(Map<String, Object> input) {
             updateTimestamp((String) input.get("timestamp"));
-            this.state = Util.resolve(input, "state.value", "-");
-            this.heading = Util.resolve(input, "target.headingMagnetic.value", 0.0);
-            this.fireUpdate();
+            String path = (String) input.get("path");
+
+            String newstate = this.state;
+            double newheading = this.heading;
+            if ( path == null || this.key.id.equals(path)) {
+                newstate = Util.resolve(input, "state.value", this.state);
+                newheading = Util.resolve(input, "target.headingMagnetic.value", this.heading);
+            } else if ( path.endsWith(".state")) {
+                newstate = Util.resolve(input, "value", this.state);
+            } else if ( path.endsWith(".target.headingMagnetic")) {
+                newheading = Util.resolve(input, "value", this.heading);
+            }
+            if ( !this.state.equals(newstate) ||
+                    this.heading != newheading) {
+                this.state = newstate;
+                this.heading = newheading;
+                this.fireUpdate();
+            }
         }
 
         public String getState() {
@@ -713,23 +830,56 @@ public class Data {
 
     public static class FixDataValue extends DataValue {
 
-        private String methodQuality;
-        private String type;
-        private long satellites;
-        private String integrity;
-        private double horizontalDilution;
+        private String methodQuality = "-";
+        private String type = "-";
+        private long satellites = 0L;
+        private String integrity = "-";
+        private double horizontalDilution = 0.0;
 
         public FixDataValue(DataKey k) {
             super(k);
         }
         public void update(Map<String, Object> input) {
             updateTimestamp((String) input.get("timestamp"));
-            this.methodQuality = Util.resolve(input, "methosQuality.value", "-");
-            this.horizontalDilution = Util.resolve(input, "horizontalDilution.value", 0.0);
-            this.type = Util.resolve(input, "type.value", "-");
-            this.satellites = Util.resolve(input, "satellites.value", 0L);
-            this.integrity = Util.resolve(input, "integrity.value", "-");
-            this.fireUpdate();
+            String path = (String) input.get("path");
+
+            String newmethodQuality = this.methodQuality;
+            double newhorizontalDilution = this.horizontalDilution;
+            String newtype = this.type;
+            long newsatellites = this.satellites;
+            String newintegrity = this.integrity;
+            if (path == null || key.id.equals(path)) {
+                newmethodQuality = Util.resolve(input, "methodQuality.value", this.methodQuality);
+                newhorizontalDilution = Util.resolve(input, "horizontalDilution.value", this.horizontalDilution);
+                newtype = Util.resolve(input, "type.value", this.type);
+                newsatellites = Util.resolve(input, "satellites.value", this.satellites);
+                newintegrity = Util.resolve(input, "integrity.value", this.integrity);
+            } else if ( path.endsWith(".methodQuality")) {
+                newmethodQuality = Util.resolve(input, "value", this.methodQuality);
+
+            } else if ( path.endsWith(".horizontalDilution")) {
+                newhorizontalDilution = Util.resolve(input, "value", this.horizontalDilution);
+            } else if ( path.endsWith(".type")) {
+                newtype = Util.resolve(input, "value", this.type);
+            } else if ( path.endsWith(".satellites")) {
+                newsatellites = Util.resolve(input, "value", this.satellites);
+            } else if ( path.endsWith(".integrity")) {
+                newintegrity = Util.resolve(input, "value", this.integrity);
+            }
+            if ( !this.methodQuality.equals(newmethodQuality) ||
+                    this.horizontalDilution != newhorizontalDilution ||
+                    !this.type.equals(newtype) ||
+                    this.satellites != newsatellites ||
+                    !this.integrity.equals(newintegrity)) {
+                this.methodQuality = newmethodQuality;
+                this.horizontalDilution = newhorizontalDilution;
+                this.satellites = newsatellites;
+                this.type = newtype;
+                this.integrity = newintegrity;
+                this.fireUpdate();
+
+            }
+
         }
 
         public String getMethodQuality() {
@@ -766,9 +916,13 @@ public class Data {
 
         public void update(Map<String, Object> input) {
             updateTimestamp((String) input.get("timestamp"));
-            this.longitude = Util.resolve(input,"value.longitude", this.longitude);
-            this.latitude = Util.resolve(input,"value.latitude", this.latitude);
-            this.fireUpdate();
+            double newlongitude = Util.resolve(input,"value.longitude", this.longitude);
+            double newlatitude = Util.resolve(input,"value.latitude", this.latitude);
+            if ( newlongitude != longitude || newlatitude != latitude) {
+                longitude = newlongitude;
+                latitude = newlatitude;
+                this.fireUpdate();
+            }
         }
 
 
@@ -794,9 +948,13 @@ public class Data {
 
         public void update(Map<String, Object> input) {
             updateTimestamp((String) input.get("timestamp"));
-            this.drift = Util.resolve(input,"current.value.drift",this.drift);
-            this.set = Util.resolve(input,"current.value.setTrue",this.set);
-            this.fireUpdate();
+            double newDrift = Util.resolve(input,"value.drift",this.drift);
+            double newSet = Util.resolve(input,"value.setTrue",this.set);
+            if ( newDrift != this.drift || newSet != this.set ) {
+                this.drift = newDrift;
+                this.set = newSet;
+                this.fireUpdate();
+            }
         }
 
         public double getDrift() {

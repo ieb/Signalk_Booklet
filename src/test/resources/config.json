@@ -38,13 +38,16 @@
   "pages" : [
     {
       "id": "page1",
+      "rows": 4,
+      "cols": 4,
+      "hspace": 5,
+      "vspace": 5,
       "instruments" : [
         {
-          "type": "EInkTextBox",
+          "type": "EInkSpeed",
           "options": {
             "labels" : {
-              "bl":"aws1",
-              "br": "kn"
+              "bl":"aws1"
             }
 
           },
@@ -53,11 +56,10 @@
           ]
         },
         {
-          "type": "EInkTextBox",
+          "type": "EInkRelativeAngle",
           "options": {
             "labels" : {
-              "bl":"awa2",
-              "br": "deg"
+              "bl":"awa2"
             }
 
           },
@@ -66,11 +68,10 @@
           ]
         },
         {
-          "type": "EInkTextBox",
+          "type": "EInkRelativeAngle",
           "options": {
             "labels" : {
-              "bl":"twa3",
-              "br": "deg"
+              "bl":"twa3"
             }
 
           },
@@ -79,11 +80,10 @@
           ]
         },
         {
-          "type": "EInkTextBox",
+          "type": "EInkSpeed",
           "options": {
             "labels" : {
-              "bl":"tws4",
-              "br": "kn"
+              "bl":"tws4"
             }
 
           },
@@ -92,11 +92,10 @@
           ]
         },
         {
-          "type": "EInkTextBox",
+          "type": "EInkSpeed",
           "options": {
             "labels" : {
-              "bl":"stw5",
-              "br": "kn"
+              "bl":"stw5"
             }
 
           },
@@ -105,11 +104,10 @@
           ]
         },
         {
-          "type": "EInkTextBox",
+          "type": "EInkRelativeAngle",
           "options": {
             "labels" : {
-              "bl":"awa6",
-              "br": "deg"
+              "bl":"awa6"
             }
 
           },
@@ -118,11 +116,10 @@
           ]
         },
         {
-          "type": "EInkTextBox",
+          "type": "EInkRelativeAngle",
           "options": {
             "labels" : {
-              "bl":"twa7",
-              "br": "deg"
+              "bl":"twa7"
             }
 
           },
@@ -131,11 +128,10 @@
           ]
         },
         {
-          "type": "EInkTextBox",
+          "type": "EInkSpeed",
           "options": {
             "labels" : {
-              "bl":"tws8",
-              "br": "kn"
+              "bl":"tws8"
             }
 
           },
@@ -144,11 +140,10 @@
           ]
         },
         {
-          "type": "EInkTextBox",
+          "type": "EInkSpeed",
           "options": {
             "labels" : {
-              "bl":"aws9",
-              "br": "kn"
+              "bl":"aws9"
             }
 
           },
@@ -157,11 +152,10 @@
           ]
         },
         {
-          "type": "EInkTextBox",
+          "type": "EInkRelativeAngle",
           "options": {
             "labels" : {
-              "bl":"awa10",
-              "br": "deg"
+              "bl":"awa10"
             }
 
           },
@@ -170,11 +164,10 @@
           ]
         },
         {
-          "type": "EInkTextBox",
+          "type": "EInkRelativeAngle",
           "options": {
             "labels" : {
-              "bl":"twa11",
-              "br": "deg"
+              "bl":"twa11"
             }
 
           },
@@ -183,11 +176,10 @@
           ]
         },
         {
-          "type": "EInkTextBox",
+          "type": "EInkSpeed",
           "options": {
             "labels" : {
-              "bl":"tws12",
-              "br": "kn"
+              "bl":"tws12"
             }
 
           },
@@ -196,11 +188,10 @@
           ]
         },
         {
-          "type": "EInkTextBox",
+          "type": "EInkSpeed",
           "options": {
             "labels" : {
-              "bl":"stw13",
-              "br": "kn"
+              "bl":"stw13"
             }
 
           },
@@ -209,11 +200,10 @@
           ]
         },
         {
-          "type": "EInkTextBox",
+          "type": "EInkRelativeAngle",
           "options": {
             "labels" : {
-              "bl":"awa14",
-              "br": "deg"
+              "bl":"awa14"
             }
 
           },
@@ -222,11 +212,10 @@
           ]
         },
         {
-          "type": "EInkTextBox",
+          "type": "EInkRelativeAngle",
           "options": {
             "labels" : {
-              "bl":"twa15",
-              "br": "deg"
+              "bl":"twa15"
             }
 
           },
@@ -235,11 +224,10 @@
           ]
         },
         {
-          "type": "EInkTextBox",
+          "type": "EInkSpeed",
           "options": {
             "labels" : {
-              "bl":"tws16",
-              "br": "kn"
+              "bl":"tws16"
             }
 
           },

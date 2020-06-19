@@ -29,7 +29,6 @@ public class EInkTextBox extends JPanel implements Data.Listener<DataValue> {
     int smallLineSpace;
     int borderPadding;
     final Data.DisplayUnits displayUnits;
-    final Data.DataType dataType;
     private boolean withStats;
     String out;
     String outmean;
@@ -42,7 +41,6 @@ public class EInkTextBox extends JPanel implements Data.Listener<DataValue> {
 
     public EInkTextBox(boolean rotate, Map<String, Object> options, Data.DisplayUnits displayUnits) {
         this.displayUnits = displayUnits;
-        this.dataType = Util.option(options, "dataType", Data.DataType.NONE);
         this.dataFormat = Util.option(options, "dataFormat", new DecimalFormat("0.##"));
         this.boxSize = Util.option(options, "boxSize", 100);
         this.labels = Util.option(options, "labels", null);
@@ -83,11 +81,11 @@ public class EInkTextBox extends JPanel implements Data.Listener<DataValue> {
     boolean formatOutput(DataValue data) {
         if ( this.withStats) {
 
-            String out = this.displayUnits.toDispay(data.getValue(), dataFormat, dataType);
-            String outmax = this.displayUnits.toDispay(data.getMax(), dataFormat, dataType);
-            String outmin = this.displayUnits.toDispay(data.getMin(), dataFormat, dataType);
-            String outmean = "\u03BC " + this.displayUnits.toDispay(data.getMean(), dataFormat, dataType);
-            String outstdev = "\u03C3 " + this.displayUnits.toDispay(data.getStdev(), dataFormat, dataType);
+            String out = this.displayUnits.toDispay(data.getValue(), dataFormat, data.key.type);
+            String outmax = this.displayUnits.toDispay(data.getMax(), dataFormat, data.key.type);
+            String outmin = this.displayUnits.toDispay(data.getMin(), dataFormat, data.key.type);
+            String outmean = "\u03BC " + this.displayUnits.toDispay(data.getMean(), dataFormat, data.key.type);
+            String outstdev = "\u03C3 " + this.displayUnits.toDispay(data.getStdev(), dataFormat, data.key.type);
             if (!out.equals(this.out) ||
                     !outmax.equals(this.outmax) ||
                     !outmin.equals(this.outmin) ||
@@ -101,7 +99,7 @@ public class EInkTextBox extends JPanel implements Data.Listener<DataValue> {
                 return true;
             }
         } else {
-            String out = this.displayUnits.toDispay(data.getValue(), dataFormat, dataType);
+            String out = this.displayUnits.toDispay(data.getValue(), dataFormat, data.key.type);
             if ( !out.equals(this.out)) {
                 this.out = out;
                 return true;

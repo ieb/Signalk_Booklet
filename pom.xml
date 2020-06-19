@@ -14,7 +14,6 @@
   <scm>
     <connection>scm:git:git://github.com/ieb/Signalk_Booklet.git</connection>
   </scm>
-
   <build>
     <resources>
       <resource>
@@ -41,6 +40,27 @@
         </configuration>
       </plugin>
 
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-dependencies</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}/lib</outputDirectory>
+              <overWriteReleases>false</overWriteReleases>
+              <overWriteSnapshots>false</overWriteSnapshots>
+              <overWriteIfNewer>true</overWriteIfNewer>
+              <includeScope>runtime</includeScope>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
       <!-- Make this jar executable -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -55,6 +75,8 @@
             <manifest>
               <!-- Jar file entry point -->
               <mainClass>uk.co.tfd.kindle.signalk.Main</mainClass>
+              <addClasspath>true</addClasspath>
+              <classpathPrefix>lib/</classpathPrefix>
             </manifest>
           </archive>
         </configuration>
@@ -210,6 +232,22 @@
     </plugins>
   </build>
   <dependencies>
+    <dependency>
+      <groupId>org.yaml</groupId>
+      <artifactId>snakeyaml</artifactId>
+      <version>1.26</version>
+      <scope>compile</scope>
+    </dependency>
+      <dependency>
+          <groupId>org.jmdns</groupId>
+          <artifactId>jmdns</artifactId>
+          <version>3.5.5</version>
+      </dependency>
+      <dependency>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-simple</artifactId>
+          <version>1.7.25</version>
+      </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

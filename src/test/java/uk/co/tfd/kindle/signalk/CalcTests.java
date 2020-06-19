@@ -22,19 +22,18 @@ public class CalcTests {
 
     @Before
     public void before() {
-        calcs = new Calcs();
         store = new Data.Store();
-        store.addListener(calcs);
+        calcs = new Calcs(store);
+        calcs.start();
 
     }
 
     @Test
     public void testCalcsStartup() {
-        calcs.onUpdate(store);
+        // FIXME calcs.onUpdate(store);
     }
     @Test
     public void testCalcsUpdate() throws ParseException {
-        calcs.onUpdate(store);
         JSONParser parser = new JSONParser();
         Map<String, Object> update = (Map<String, Object>) parser.parse(TEST_JSON);
         store.update("", update);
@@ -43,7 +42,6 @@ public class CalcTests {
     }
     @Test
     public void testCalcsUpdateEnhance() throws ParseException {
-        calcs.onUpdate(store);
         JSONParser parser = new JSONParser();
         Map<String, Object> update = (Map<String, Object>) parser.parse(TEST_JSON);
         store.update("", update);
@@ -52,7 +50,7 @@ public class CalcTests {
     }
     @Test
     public void testCalcsUpdateEnhanceStats() throws ParseException {
-        calcs.enhance(store);
+       // calcs.enhance();
         JSONParser parser = new JSONParser();
         Map<String, Object> update = (Map<String, Object>) parser.parse(TEST_JSON);
         store.update("", update);

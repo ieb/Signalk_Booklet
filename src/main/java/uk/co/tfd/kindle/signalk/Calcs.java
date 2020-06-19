@@ -8,7 +8,7 @@ import uk.co.tfd.kindle.signalk.Data.Store;
 /**
  * Created by ieb on 08/06/2020.
  */
-public class Calcs implements Data.Listener<Store> {
+public class Calcs implements Data.Listener<Data.DataValue> {
 
     private static double[] POGO_1250_TWS = {0,4,6,8,10,12,14,16,20,25,30,35,40,45,50,55,60};
     private static double[] POGO_1250_TWA = {0,5,10,15,20,25,32,36,40,45,52,60,70,80,90,100,110,120,130,140,150,160,170,180};
@@ -38,6 +38,7 @@ public class Calcs implements Data.Listener<Store> {
             {0,2.4,3.6,4.8,5.9,6.8,7.6,8.2,9.4,11.4,14.3,16.6,16.6,15.8,12.5,5,4.2},
             {0,2.2,3.3,4.4,5.5,6.4,7.2,7.9,9,10.6,12.8,15.4,15.4,15.4,12.3,4.6,3.9}
         };
+    private final Store store;
 
     private Polar polar;
 
@@ -45,10 +46,29 @@ public class Calcs implements Data.Listener<Store> {
 
 
 
-    public Calcs() {
+    public Calcs(Store store) {
         // could load from options.
         polar = new Polar("pogo1250",POGO_1250_TWS,POGO_1250_TWA,POGO_1250_POLAR);
+
+        this.store = store;
+
     }
+
+    public void start() {
+        DoubleDataValue magneticVariation = store.get(DataKey.NAVIGATION_MAGNETIC_VARIATION);
+        magneticVariation.addListener(this);
+        DoubleDataValue stw = store.get(DataKey.NAVIGATION_SPEED_THROUGH_WATER);
+        stw.addListener(this);
+        Data.AttitudeDataValue attitude = store.get(DataKey.NAVIGATION_ATTITUDE);
+        attitude.addListener(this);
+        DoubleDataValue aws = store.get(DataKey.ENVIRONMENT_WIND_SPEED_APPARENT);
+        aws.addListener(this);
+        DoubleDataValue awa = store.get(DataKey.ENVIRONMENT_WIND_ANGLE_APPARENT);
+        awa.addListener(this);
+        DoubleDataValue hdt = store.get(DataKey.NAVIGATION_HEADING_TRUE);
+        hdt.addListener(this);
+    }
+
 
 
 
@@ -67,24 +87,23 @@ public class Calcs implements Data.Listener<Store> {
         DoubleDataValue magneticVariation = store.get(DataKey.NAVIGATION_MAGNETIC_VARIATION);
         DoubleDataValue trueBearing =  store.get(DataKey.NAVIGATION_HEADING_TRUE);
         DoubleDataValue magneticBearing =  store.get(DataKey.NAVIGATION_HEADING_MAGNETIC);
-        if ( !trueBearing.isEmpty() && magneticBearing.isEmpty()) {
+        if ( trueBearing.isInput() && !magneticBearing.isInput()) {
             magneticBearing.update(correctBearing(trueBearing.value + magneticVariation.value),trueBearing.timestamp);
-        } else if (!magneticBearing.isEmpty() && trueBearing.isEmpty()) {
+        } else if (magneticBearing.isInput() && !trueBearing.isInput()) {
             trueBearing.update(correctBearing(trueBearing.value - magneticVariation.value),magneticBearing.timestamp);
         }
 
     }
 
     @Override
-    public void onUpdate(Store d) {
+    public void onUpdate(Data.DataValue d) {
+
         enhance(d);
     }
 
 
-    public void enhance(Store store) {
-        if ( store == null ) {
-            return;
-        }
+
+    public void enhance(Data.DataValue d) {
         calcBearing(store);
         DoubleDataValue stw = store.get(DataKey.NAVIGATION_SPEED_THROUGH_WATER);
         Data.AttitudeDataValue attitide = store.get(DataKey.NAVIGATION_ATTITUDE);
@@ -103,12 +122,10 @@ public class Calcs implements Data.Listener<Store> {
                 leeway.update(5 * attitide.getRoll() / (stw.value * stw.value),attitide.timestamp);
             }
         }
-        if ( twa.isEmpty() || tws.isEmpty()) {
-            double apparentX = Math.cos(awa.value) * aws.value;
-            double apparentY = Math.sin(awa.value) * aws.value;
-            twa.update(Math.atan2(apparentY, -stw.value + apparentX),aws.timestamp);
-            tws.update(Math.sqrt(Math.pow(apparentY,2) + Math.pow(-stw.value +apparentX,2)), aws.timestamp);
-        }
+        double apparentX = Math.cos(awa.value) * aws.value;
+        double apparentY = Math.sin(awa.value) * aws.value;
+        twa.update(Math.atan2(apparentY, -stw.value + apparentX),aws.timestamp);
+        tws.update(Math.sqrt(Math.pow(apparentY,2) + Math.pow(-stw.value +apparentX,2)), aws.timestamp);
         this.polar.calcPerformance(store);
 
     }
