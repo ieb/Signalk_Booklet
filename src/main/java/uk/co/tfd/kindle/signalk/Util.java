@@ -6,15 +6,20 @@ import com.amazon.kindle.restricted.content.catalog.ContentCatalog;
 import com.amazon.kindle.restricted.runtime.Framework;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Date;
+import java.util.Map;
 
 
 public class Util {
+
+    private static final Logger log = LoggerFactory.getLogger(Util.class);
 
 
 	public static BookletContext obGetBookletContext(int j, AbstractBooklet booklet){
@@ -23,43 +28,43 @@ public class Util {
 		for (int i = 0; i < methods.length; i++) {
 			if (methods[i].getReturnType() == BookletContext.class) {
 				// Double check that it takes no arguments, too...
-				System.out.println("OOOOOOOOOOOOOOOOOOOOOOOOOOO");
+                log.debug("OOOOOOOOOOOOOOOOOOOOOOOOOOO");
 				Class[] params = methods[i].getParameterTypes();
-				System.out.println("OOOOOOOOOOOOOOOOOOOOOOOOOOO");
+                log.debug("OOOOOOOOOOOOOOOOOOOOOOOOOOO");
 				if (params.length == 0) {
 					try {
-						System.out.println(i);
-						System.out.println(methods[i]);
-						System.out.println(methods[i].getReturnType().getName());
-						System.out.println(methods[i].getName());
-						System.out.println(methods[i].getParameterCount());
-						System.out.println(booklet);
-						System.out.println("---------------------------------------");
+                        log.debug("{}",i);
+                        log.debug("{}",methods[i]);
+                        log.debug("{}",methods[i].getReturnType().getName());
+                        log.debug("{}",methods[i].getName());
+                        log.debug("{}",methods[i].getParameterCount());
+                        log.debug("{}",booklet);
+                        log.debug("---------------------------------------");
 						bc = (BookletContext) methods[i].invoke(booklet, null);
-						System.out.println("OOOOOOOOOOOOOOOOOOOOOOOOOOO");
-						System.out.println(bc);
-					} catch (IllegalAccessException e) {
+                        log.debug("OOOOOOOOOOOOOOOOOOOOOOOOOOO");
+                        log.debug("{}",bc);
+                    } catch (IllegalAccessException e) {
 						// TODO Auto-generated catch block
-						e.printStackTrace();
+                        log.error(e.getMessage(), e);
 					} catch (IllegalArgumentException e) {
 						// TODO Auto-generated catch block
-						e.printStackTrace();
+                        log.error(e.getMessage(), e);
 					} catch (InvocationTargetException e) {
 						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+                        log.error(e.getMessage(), e);
+                    }
 					break;
 				}
 			}
 		}
-		System.out.println("OOOOOOOOOOOOOOOOOOOOOOOOOOO");
-		return bc;
+		log.debug("OOOOOOOOOOOOOOOOOOOOOOOOOOO");
+        return bc;
 	}
 
 	public static Container getUIContainer(AbstractBooklet booklet) throws InvocationTargetException, IllegalAccessException {
 
 		Method getUIContainer = null;
-		System.out.println("OOOOOOOOOOOOOOOOOOOOOOOOOOO");
+        log.debug("OOOOOOOOOOOOOOOOOOOOOOOOOOO");
 		// Should be the only method returning a Container in BookletContext...
 		Method[] methods = BookletContext.class.getDeclaredMethods();
 		for (int i = 0; i < methods.length; i++) {
@@ -68,7 +73,7 @@ public class Util {
 				Class[] params = methods[i].getParameterTypes();
 				if (params.length == 0) {
 					getUIContainer = methods[i];
-					System.out.println("OOOOOOOOOOOOOOOOOOOOOOOOOOO");
+                    log.debug("OOOOOOOOOOOOOOOOOOOOOOOOOOO");
 					break;
 				}
 			}
@@ -77,12 +82,12 @@ public class Util {
 
 		if (getUIContainer != null) {
 
-			System.out.println("OOOOOOOOOOOOOOOOOOOOOOOOOOO");
+            log.debug("OOOOOOOOOOOOOOOOOOOOOOOOOOO");
 			//new Logger().append("Found getUIContainer method as " + getUIContainer.toString());
 			BookletContext bc = Util.obGetBookletContext(1, booklet);
-			System.out.println("OOOOOOOOOOOOOOOOOOOOOOOOOOO");
+            log.debug("OOOOOOOOOOOOOOOOOOOOOOOOOOO");
 			Container rootContainer = (Container) getUIContainer.invoke(bc, null);
-			System.out.println("OOOOOOOOOOOOOOOOOOOOOOOOOOO");
+            log.debug("OOOOOOOOOOOOOOOOOOOOOOOOOOO");
 			return rootContainer;
 		}
 		else {
@@ -123,7 +128,7 @@ public class Util {
 				return json;
 			}
 			else {
-				new Logger().append("Failed to find perform method, last access time won't be set on exit!");
+				log.error("Failed to find perform method, last access time won't be set on exit!");
 				return new JSONObject();
 			}
 		} catch (Throwable t) {

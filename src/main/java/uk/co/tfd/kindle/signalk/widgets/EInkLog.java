@@ -5,15 +5,15 @@ package uk.co.tfd.kindle.signalk.widgets;
  */
 
 import uk.co.tfd.kindle.signalk.Data;
-
-import static uk.co.tfd.kindle.signalk.Data.*;
-
-
+import uk.co.tfd.kindle.signalk.Util;
 
 import java.awt.*;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import static uk.co.tfd.kindle.signalk.Data.*;
 
 
 /**
@@ -24,11 +24,11 @@ public class EInkLog extends EInkTextBox {
 
     private String trip = "-.-";
     private String log = "-.-";
-    private DecimalFormat tripFormat = new DecimalFormat("0.#");
-    private DecimalFormat logFormat = new DecimalFormat("0.#");
+    private DecimalFormat tripFormat = new DecimalFormat("trip 0.0");
+    private DecimalFormat logFormat = new DecimalFormat("log 0.0");
 
-    public EInkLog(boolean rotate, Map<String, Object> options, Data.DisplayUnits displayUnits) {
-        super(rotate, updateOptions(options), displayUnits );
+    public EInkLog(boolean rotate, Map<String, Object> options, Data.DisplayUnits displayUnits, Store store) {
+        super(rotate, updateOptions(options), displayUnits, store );
     }
 
     private static Map<String, Object> updateOptions(Map<String, Object> options) {
@@ -36,6 +36,10 @@ public class EInkLog extends EInkTextBox {
         labels.put("bl","Log");
         labels.put("br","Nm");
         options.put("labels",labels);
+        java.util.List<String> sources = new ArrayList<String>();
+        sources.add(Data.DataKey.NAVIGATION_LOG.id);
+        sources.add(Data.DataKey.NAVIGATION_TRIP_LOG.id);
+        options.put("sources", sources);
         return options;
     }
 
@@ -61,7 +65,10 @@ public class EInkLog extends EInkTextBox {
 
     @Override
     void renderInstrument(Graphics2D g2) {
-        this.twoLineLeft(trip, log, g2);
+        Util.drawString(trip, boxWidth / 2, boxHeight / 2, normalFont, Util.HAlign.CENTER, Util.VAlign.BOTTOM, g2);
+        Util.drawString(log, boxWidth / 2, boxHeight/2, normalFont, Util.HAlign.CENTER, Util.VAlign.TOP, g2);
+        this.drawBaseLine("log", "Nm", g2);
+
     }
 
 

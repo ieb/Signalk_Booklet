@@ -1,8 +1,10 @@
 package uk.co.tfd.kindle.signalk.widgets;
 
 import uk.co.tfd.kindle.signalk.Data;
+import uk.co.tfd.kindle.signalk.Util;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Map;
 
 import static uk.co.tfd.kindle.signalk.Data.DataValue;
@@ -20,11 +22,16 @@ public class EInkPossition extends EInkTextBox {
     private String date = "-";
 
 
-    public EInkPossition(boolean rotate, Map<String, Object> options, Data.DisplayUnits displayUnits) {
-        super(rotate, updateOptions(options), displayUnits );
+    public EInkPossition(boolean rotate, Map<String, Object> options, Data.DisplayUnits displayUnits, Data.Store store) {
+        super(rotate, updateOptions(options), displayUnits, store);
     }
 
     private static Map<String, Object> updateOptions(Map<String, Object> options) {
+        java.util.List<String> sources = new ArrayList<String>();
+        sources.add(Data.DataKey.NAVIGATION_POSITION.id);
+        sources.add(Data.DataKey.NAVIGATION_DATETIME.id);
+        options.put("sources", sources);
+
         return options;
     }
 
@@ -59,9 +66,14 @@ public class EInkPossition extends EInkTextBox {
 
     @Override
     void renderInstrument(Graphics2D g2) {
-        this.twoLineLeft(latitude, longitude, g2);
-        this.drawBaseLine("pos", date, g2);
+        Util.drawString(latitude, boxWidth / 2, boxHeight/2, normalFont, Util.HAlign.CENTER, Util.VAlign.BOTTOM, g2);
+        Util.drawString(longitude, boxWidth / 2, boxHeight/2, normalFont, Util.HAlign.CENTER, Util.VAlign.TOP, g2);
+        Util.drawString(date, borderPadding, smallLineSpace, smallFont, Util.HAlign.CENTER, Util.VAlign.BOTTOM, g2);
+        this.drawBaseLine("pos", "lat/lon", g2);
+
     }
+
+
 
 
 }

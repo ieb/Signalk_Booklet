@@ -74,7 +74,7 @@
           <archive>
             <manifest>
               <!-- Jar file entry point -->
-              <mainClass>uk.co.tfd.kindle.signalk.Main</mainClass>
+              <mainClass>uk.co.tfd.kindle.signalk.SignalkBooklet</mainClass>
               <addClasspath>true</addClasspath>
               <classpathPrefix>lib/</classpathPrefix>
             </manifest>

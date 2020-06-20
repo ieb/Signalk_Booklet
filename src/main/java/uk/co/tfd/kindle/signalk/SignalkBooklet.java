@@ -1,20 +1,20 @@
 /*** Eclipse Class Decompiler plugin, copyright (c) 2016 Chen Chao (cnfree2000@hotmail.com) ***/
 package uk.co.tfd.kindle.signalk;
 
+import com.amazon.kindle.booklet.AbstractBooklet;
+import com.amazon.kindle.booklet.BookletContext;
+import com.amazon.kindle.booklet.ChromeHeaderRequest;
+import org.json.simple.parser.ParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.URI;
 
-
-import com.amazon.kindle.booklet.AbstractBooklet;
-import com.amazon.kindle.booklet.BookletContext;
-import com.amazon.kindle.booklet.ChromeHeaderRequest;
-
-import javax.swing.*;
-
-public class HelloWorldBooklet extends AbstractBooklet implements ActionListener {
+public class SignalkBooklet extends AbstractBooklet implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
 	// Handle the privilege hint prefix...
@@ -26,16 +26,16 @@ public class HelloWorldBooklet extends AbstractBooklet implements ActionListener
 
 	private Component status = null;
 	private int depth = 0;
+	private static final Logger log = LoggerFactory.getLogger(SignalkBooklet.class);
 
-	public HelloWorldBooklet() {
-		//new Logger().append("HelloWorldBooklet");
-
-
+	public SignalkBooklet() {
+		System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "info");
+		System.setProperty("org.slf4j.simpleLogger.logFile","/var/tmp/HelloWorld.log");
 
 		new java.util.Timer().schedule(
                 new java.util.TimerTask() {
                     public void run() {
-                        HelloWorldBooklet.this.longStart();
+                        SignalkBooklet.this.longStart();
                     }
                 },
                 1000
@@ -71,7 +71,7 @@ public class HelloWorldBooklet extends AbstractBooklet implements ActionListener
 			try {
 				Container container = Util.getUIContainer(this);
 				if (container == null) {
-					new Logger().append("Failed to find getUIContainer method, abort!");
+					log.error("Failed to find getUIContainer method, abort!");
 					suicide(Util.obGetBookletContext(2, this));
 					return null;
 				}
@@ -97,34 +97,13 @@ public class HelloWorldBooklet extends AbstractBooklet implements ActionListener
 			// Send a STOP lipc event to exit the app (-> stop() -> destroy()). More closely mirrors the Kindlet lifecycle.
 			Runtime.getRuntime().exec("lipc-set-prop com.lab126.appmgrd stop app://com.mobileread.ixtab.signalk");
 		} catch (IOException e) {
-			new Logger().append(e.toString());
+			log.error("Failed when terminating ", e);
 		}
 	}
 
 
 
 	private void longStart() {
-		/*
-		 * High-level description of KUAL flow
-		 *
-		 * 1. booklet: spawn the parser then block waiting for input from the
-		 *    parser.
-		 * 2. parser: send the booklet cached data so the booklet can
-		 *    quickly move on to initialize the UI.
-		 * 3. booklet: initialize UI and display the menu.
-		 * 4. booklet: schedule a 20-time-repeat 500ms
-		 *    timer task which checks for messages from the parser.
-		 * 5. parser:
-		 *    (while the booklet is initializing the UI) parse menu files and
-		 *    refresh the cache.
-		 * 6: parser: if the fresh cache differs from the
-		 *    cache sent in step 2 then post the booklet a message.
-		 * 7: parser: exit.
-		 * 8: booklet: if the timer found a message in the mailbox update the
-		 *    menu from the fresh cache and re-display UI.
-		 * 9: booklet: loop: wait
-		 *    for user interaction; handle interaction.
-		 */
 		try {
 			initializeUI(); // step 3
 		} catch (Throwable t) {
@@ -136,29 +115,19 @@ public class HelloWorldBooklet extends AbstractBooklet implements ActionListener
 
 
 
-	private void initializeUI() {
+	private void initializeUI() throws IOException, NoSuchMethodException, ParseException {
 		Container root = getUIContainer();
 		root.removeAll();
+		MainScreen mainScreen = new MainScreen(root,
+				"src/test/resources/config.yaml",
+				new MainScreen.MainScreenExit() {
 
-		GridLayout layout = new GridLayout();
-		layout.setColumns(3);
-		layout.setRows(4);
-
-		root.setLayout(layout);
-		root.add(new uk.co.tfd.kindle.signalk.Instrument(1));
-		JButton exitButton = new JButton("Exit");
-		exitButton.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				stop();
+			public void exit() {
+				SignalkBooklet.this.suicide(Util.obGetBookletContext(2, SignalkBooklet.this));
 			}
 		});
-		root.add(exitButton);
-
-
-        // BUILD SWING UI
-
-
+		mainScreen.start();
 	}
 
 

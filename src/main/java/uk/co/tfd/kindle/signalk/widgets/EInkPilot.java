@@ -5,6 +5,7 @@ import uk.co.tfd.kindle.signalk.Util;
 
 import java.awt.*;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,8 +22,8 @@ public class EInkPilot extends EInkTextBox {
     private String pilotHeading = "-";
     private DecimalFormat headingFormat = new DecimalFormat("0.0 \u00B0T");
 
-    public EInkPilot(boolean rotate, Map<String, Object> options, Data.DisplayUnits displayUnits) {
-        super(rotate, updateOptions(options), displayUnits );
+    public EInkPilot(boolean rotate, Map<String, Object> options, Data.DisplayUnits displayUnits, Data.Store store) {
+        super(rotate, updateOptions(options), displayUnits, store );
     }
 
     private static Map<String, Object> updateOptions(Map<String, Object> options) {
@@ -30,6 +31,9 @@ public class EInkPilot extends EInkTextBox {
         labels.put("bl","Pilot");
         labels.put("br","deg");
         options.put("labels",labels);
+        java.util.List<String> sources = new ArrayList<String>();
+        sources.add(Data.DataKey.STEERING_AUTOPILOT.id);
+        options.put("sources", sources);
         return options;
     }
 

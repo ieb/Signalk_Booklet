@@ -1,5 +1,7 @@
 package uk.co.tfd.kindle.signalk.widgets;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.co.tfd.kindle.signalk.Data;
 import uk.co.tfd.kindle.signalk.Util;
 
@@ -7,7 +9,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.text.DecimalFormat;
-import java.util.HashMap;
 import java.util.Map;
 
 import static uk.co.tfd.kindle.signalk.Data.DataValue;
@@ -17,8 +18,9 @@ import static uk.co.tfd.kindle.signalk.Data.DataValue;
  */
 public class EInkTextBox extends JPanel implements Data.Listener<DataValue> {
 
-
+    private static final Logger log = LoggerFactory.getLogger(EInkTextBox.class);
     private final boolean rotate;
+    Font normalFont;
     int boxWidth;
     int boxHeight;
     private int fontSize;
@@ -36,14 +38,16 @@ public class EInkTextBox extends JPanel implements Data.Listener<DataValue> {
     String outmax;
     String outmin;
     private int boxSize;
-    private HashMap<String, String> labels;
+    private Map<String, String> labels;
+    private java.util.List<String> sources;
     DecimalFormat dataFormat;
 
-    public EInkTextBox(boolean rotate, Map<String, Object> options, Data.DisplayUnits displayUnits) {
+    public EInkTextBox(boolean rotate, Map<String, Object> options, Data.DisplayUnits displayUnits, Data.Store store) {
         this.displayUnits = displayUnits;
         this.dataFormat = Util.option(options, "dataFormat", new DecimalFormat("0.##"));
         this.boxSize = Util.option(options, "boxSize", 100);
         this.labels = Util.option(options, "labels", null);
+        this.sources = Util.option(options, "sources", null);
         this.withStats = Util.option(options, "withStats",true);
         this.rotate = rotate;
         this.out = "-.-";
@@ -57,14 +61,31 @@ public class EInkTextBox extends JPanel implements Data.Listener<DataValue> {
 
         this.fontSize = (int)(boxSize*0.8);
         this.largeFont = new Font("Arial", Font.PLAIN, fontSize);
-        this.mediumFont = largeFont.deriveFont((float) fontSize /4);
-        this.smallFont = largeFont.deriveFont((float) fontSize /6);
+        this.normalFont = largeFont.deriveFont((float) (fontSize /2.5));
+        this.mediumFont = largeFont.deriveFont((float) (fontSize /4));
+        this.smallFont = largeFont.deriveFont((float) (fontSize /6));
         this.mediumLineSpace = boxHeight /4;
         this.smallLineSpace = boxHeight /8;
         this.borderPadding = boxWidth / 30;
 
 
         this.setSize((int)(this.boxSize*2.2),(int)(this.boxSize*1.2));
+
+        if ( this.sources != null) {
+            for (String source : sources) {
+                Data.DataKey k = Data.DataKey.get(source);
+                if ( k != null) {
+                    Data.DataValue dv = store.get(k);
+                    if (dv != null) {
+                        dv.addListener(this);
+                    } else {
+                        log.warn("Unable to find data value for {} ", k);
+                    }
+                } else {
+                    log.warn("Unable to find Key for {} ", source);
+                }
+            }
+        }
 
     }
 
@@ -121,8 +142,9 @@ public class EInkTextBox extends JPanel implements Data.Listener<DataValue> {
 
             this.fontSize = (int)(boxSize*0.8);
             this.largeFont = new Font("Arial", Font.PLAIN, fontSize);
-            this.mediumFont = largeFont.deriveFont((float) fontSize /4);
-            this.smallFont = largeFont.deriveFont((float) fontSize /6);
+            this.normalFont = largeFont.deriveFont((float) (fontSize /2.5));
+            this.mediumFont = largeFont.deriveFont((float) (fontSize /4));
+            this.smallFont = largeFont.deriveFont((float) (fontSize /6));
             this.mediumLineSpace = boxHeight /4;
             this.smallLineSpace = boxHeight /8;
             this.borderPadding = boxWidth / 30;
@@ -154,17 +176,26 @@ public class EInkTextBox extends JPanel implements Data.Listener<DataValue> {
         Util.drawString(l, borderPadding, boxHeight, mediumFont, Util.HAlign.LEFT, Util.VAlign.BOTTOM, g2);
         Util.drawString(r, boxWidth - borderPadding, boxHeight, mediumFont, Util.HAlign.RIGHT, Util.VAlign.BOTTOM, g2);
     }
+    public void drawTopLine(String l, Graphics2D g2) {
+        Util.drawString(l, borderPadding, 0, mediumFont, Util.HAlign.LEFT, Util.VAlign.TOP, g2);
+    }
 
     void twoLineLeft(String line1, String line2, Graphics2D g2) {
         Util.drawString(line1, borderPadding, mediumLineSpace, mediumFont, Util.HAlign.LEFT, Util.VAlign.TOP, g2);
-        Util.drawString(line2, boxWidth - borderPadding, boxHeight-mediumLineSpace, mediumFont, Util.HAlign.LEFT, Util.VAlign.BOTTOM, g2);
+        Util.drawString(line2, borderPadding, boxHeight-mediumLineSpace, mediumFont, Util.HAlign.LEFT, Util.VAlign.BOTTOM, g2);
 
     }
     void twoLineRight(String line1, String line2, Graphics2D g2) {
-        Util.drawString(line1, borderPadding, mediumLineSpace, mediumFont, Util.HAlign.RIGHT, Util.VAlign.TOP, g2);
+        Util.drawString(line1, boxWidth - borderPadding, mediumLineSpace, mediumFont, Util.HAlign.RIGHT, Util.VAlign.TOP, g2);
         Util.drawString(line2, boxWidth - borderPadding, boxHeight-mediumLineSpace, mediumFont, Util.HAlign.RIGHT, Util.VAlign.BOTTOM, g2);
 
     }
+
+    public void twoLineCenter(String line1, String line2, Graphics2D g2) {
+        Util.drawString(line1, boxWidth / 2, mediumLineSpace, mediumFont, Util.HAlign.CENTER, Util.VAlign.TOP, g2);
+        Util.drawString(line2, boxWidth / 2, boxHeight-mediumLineSpace, mediumFont, Util.HAlign.CENTER, Util.VAlign.BOTTOM, g2);
+    }
+
 
 
     void renderInstrument(Graphics2D g2) {
@@ -191,8 +222,6 @@ public class EInkTextBox extends JPanel implements Data.Listener<DataValue> {
             Util.drawString(this.outstdev, (boxWidth / 2), smallLineSpace, smallFont, Util.HAlign.CENTER, Util.VAlign.TOP, g2);
         }
     }
-
-
 
 
 }

@@ -13,7 +13,7 @@
 otautils_update_progressbar
 
 logmsg "I" "install" "" "installing booklet"
-cp -f "HelloWorldBooklet.jar" "/opt/amazon/ebook/booklet/HelloWorldBooklet.jar"
+cp -f "SignalkBooklet.jar" "/opt/amazon/ebook/booklet/SignalkBooklet.jar"
 
 otautils_update_progressbar
 
@@ -34,12 +34,12 @@ otautils_update_progressbar
 
 
 logmsg "I" "install" "" "creating application"
-touch "/mnt/us/documents/HelloWorld.hello"
+touch "/mnt/us/documents/SignalkBooklet.signalk"
 
 otautils_update_progressbar
 
 logmsg "I" "install" "" "cleaning up"
-rm -f "HelloWorldBooklet.jar" "appreg.install.sql"
+rm -f "SignalkBooklet.jar" "appreg.install.sql"
 
 logmsg "I" "install" "" "done"
 

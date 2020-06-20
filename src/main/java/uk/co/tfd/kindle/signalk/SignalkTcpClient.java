@@ -3,14 +3,12 @@ package uk.co.tfd.kindle.signalk;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.jmdns.JmDNS;
 import javax.jmdns.ServiceEvent;
-import javax.jmdns.ServiceInfo;
 import javax.jmdns.ServiceListener;
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -23,7 +21,8 @@ import java.util.Map;
 /**
  * Created by ieb on 19/06/2020.
  */
-public class SignalkTcpClient implements ServiceListener {
+public class SignalkTcpClient extends StatusUpdates implements ServiceListener {
+    private static final Logger log = LoggerFactory.getLogger(SignalkTcpClient.class);
     public static final String SIGNALK_TCP_TCP_LOCAL = "_signalk-tcp._tcp.local.";
     private JmDNS jmdns;
     private final Data.Store store;
@@ -47,7 +46,7 @@ public class SignalkTcpClient implements ServiceListener {
             }
         });
         for (NetworkInterface intf : interfaces) {
-            System.err.println("Interface "+intf);
+            log.debug("Interface {} ", intf);
             if ( intf.isUp() && intf.supportsMulticast() && !intf.isLoopback() ) {
                 String name = intf.getName();
                 // only use names that are expected to be connected to a valid network.
@@ -56,6 +55,7 @@ public class SignalkTcpClient implements ServiceListener {
                         InetAddress inaddr = addr.getAddress();
                         if (inaddr instanceof Inet4Address) {
                             in = inaddr;
+                            this.updateStatus("Discovering Signalk Server on "+in+" "+name);
                             break;
                         }
                     }
@@ -68,9 +68,9 @@ public class SignalkTcpClient implements ServiceListener {
         }
         if ( in == null) {
             in = InetAddress.getLocalHost();
+            this.updateStatus("Discovering Signalk Server default interface "+in);
         }
 
-        System.err.println("Address " + in);
         jmdns = JmDNS.create(in);
 
         jmdns.addServiceListener(SIGNALK_TCP_TCP_LOCAL, this);
@@ -83,19 +83,19 @@ public class SignalkTcpClient implements ServiceListener {
             jmdns.close();
             jmdns = null;
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Failed to end discovery",e);
         }
 
     }
 
     @Override
     public void serviceAdded(ServiceEvent serviceEvent) {
-        System.err.println("Service added "+serviceEvent);
+        log.debug("Service added {} ", serviceEvent);
     }
 
     @Override
     public void serviceRemoved(ServiceEvent serviceEvent) {
-        System.err.println("Service removed "+serviceEvent);
+        log.debug("Service removed {} ",serviceEvent);
 
     }
 
@@ -103,21 +103,20 @@ public class SignalkTcpClient implements ServiceListener {
     public void serviceResolved(ServiceEvent serviceEvent) {
 
         if ( !running ) {
-            System.err.println("Connecting to "+serviceEvent);
+            log.debug("Connecting to {} ",serviceEvent);
             try {
                 running = true;
                 endDiscovery();
-                System.err.println("Removed Listener");
+                log.debug("Removed Listener");
 
                 connect(serviceEvent);
-                System.err.println("Connect Done");
+                log.debug("Connect Done");
 
             } catch (Throwable t) {
-                System.err.println("Connect Failed");
-                t.printStackTrace();
+                log.debug("Connect Failed",t);
             }
         } else {
-            System.err.println("Already Connected, ignoring "+serviceEvent);
+            log.debug("Already Connected, ignoring {} ",serviceEvent);
         }
 /*
 [ServiceEventImpl@1041224902
@@ -141,10 +140,10 @@ public class SignalkTcpClient implements ServiceListener {
                 try {
                     InetAddress address = serviceEvent.getInfo().getInet4Addresses()[0];
                     int port = serviceEvent.getInfo().getPort();
-                    System.err.println("Thread "+Thread.currentThread()+" Connecting to "+address+" "+port);
+                    SignalkTcpClient.this.updateStatus(" Connecting to " + address + " " + port);
 
                     socket = new Socket(address, port);
-                    System.err.println("Thread "+Thread.currentThread()+" Connected to "+address+" "+port);
+                    SignalkTcpClient.this.updateStatus(" Connected to " + address + " " + port);
                     BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     JSONParser parser = new JSONParser();
                     stayConnected = true;
@@ -171,22 +170,22 @@ public class SignalkTcpClient implements ServiceListener {
 
                             } catch (ParseException e) {
 
-                                e.printStackTrace();
+                                log.debug(e.getMessage(),e);
                             }
                         }
                     }
                     socket.close();
                     socket = null;
                 } catch (Exception e) {
-                    System.err.println("Failed closing socket");
+                    SignalkTcpClient.this.updateStatus("Connection Failed closing socket");
+                    log.error("Failed closing socket ", e);
 
-                    e.printStackTrace();
 
                     if ( socket != null ) {
                         try {
                             socket.close();
                         } catch (IOException e1) {
-                            e1.printStackTrace();
+                            log.error("Failed closing socket (2) ", e1);
                         }
                     }
 
@@ -196,9 +195,9 @@ public class SignalkTcpClient implements ServiceListener {
                     try {
                         startDiscovery();
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        log.error("Failed starting discovery ",e);
                     }
-                    System.err.println("Listening again");
+                    log.debug("Listening again");
 
                 }
             }
@@ -206,12 +205,5 @@ public class SignalkTcpClient implements ServiceListener {
         t.start();
     }
 
-    public void list() {
-        System.err.println("Listing Services ");
-        ServiceInfo[] info = jmdns.list("_signalk-tcp._tcp.local.");
-        for(ServiceInfo si : info) {
-            System.err.println("Service Info "+si);
-        }
-    }
 
 }

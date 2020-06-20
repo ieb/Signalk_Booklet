@@ -10,8 +10,8 @@ import java.util.Map;
  */
 public class EInkRatio extends EInkTextBox {
 
-    public EInkRatio(boolean rotate, Map<String, Object> options, Data.DisplayUnits displayUnits) {
-        super(rotate, updateOptions(options), displayUnits );
+    public EInkRatio(boolean rotate, Map<String, Object> options, Data.DisplayUnits displayUnits, Data.Store store) {
+        super(rotate, updateOptions(options), displayUnits, store );
     }
 
     private static Map<String, Object> updateOptions(Map<String, Object> options) {

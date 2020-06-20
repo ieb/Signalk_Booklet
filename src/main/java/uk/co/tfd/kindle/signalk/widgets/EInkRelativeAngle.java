@@ -10,8 +10,8 @@ import java.util.Map;
  */
 public class EInkRelativeAngle extends EInkTextBox {
 
-    public EInkRelativeAngle(boolean rotate, Map<String, Object> options, Data.DisplayUnits displayUnits) {
-        super(rotate, updateOptions(options), displayUnits );
+    public EInkRelativeAngle(boolean rotate, Map<String, Object> options, Data.DisplayUnits displayUnits, Data.Store store) {
+        super(rotate, updateOptions(options), displayUnits, store );
     }
 
     private static Map<String, Object> updateOptions(Map<String, Object> options) {

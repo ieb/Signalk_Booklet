@@ -13,7 +13,7 @@
 otautils_update_progressbar
 
 logmsg "I" "uninstall" "" "uninstalling booklet"
-rm -f "/opt/amazon/ebook/booklet/HelloWorldBooklet.jar"
+rm -f "/opt/amazon/ebook/booklet/SignalkBooklet.jar"
 
 otautils_update_progressbar
 
@@ -23,7 +23,7 @@ sqlite3 "/var/local/appreg.db" < "appreg.uninstall.sql"
 otautils_update_progressbar
 
 logmsg "I" "uninstall" "" "removing application"
-rm -f "/mnt/us/documents/HelloWorld.hello"
+rm -f "/mnt/us/documents/SignalkBooklet.signalk"
 
 otautils_update_progressbar
 

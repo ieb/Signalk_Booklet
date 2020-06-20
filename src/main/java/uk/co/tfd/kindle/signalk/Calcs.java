@@ -1,6 +1,8 @@
 package uk.co.tfd.kindle.signalk;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.co.tfd.kindle.signalk.Data.DataKey;
 import uk.co.tfd.kindle.signalk.Data.DoubleDataValue;
 import uk.co.tfd.kindle.signalk.Data.Store;
@@ -8,7 +10,7 @@ import uk.co.tfd.kindle.signalk.Data.Store;
 /**
  * Created by ieb on 08/06/2020.
  */
-public class Calcs implements Data.Listener<Data.DataValue> {
+public class Calcs extends StatusUpdates implements Data.Listener<Data.DataValue> {
 
     private static double[] POGO_1250_TWS = {0,4,6,8,10,12,14,16,20,25,30,35,40,45,50,55,60};
     private static double[] POGO_1250_TWA = {0,5,10,15,20,25,32,36,40,45,52,60,70,80,90,100,110,120,130,140,150,160,170,180};
@@ -67,6 +69,8 @@ public class Calcs implements Data.Listener<Data.DataValue> {
         awa.addListener(this);
         DoubleDataValue hdt = store.get(DataKey.NAVIGATION_HEADING_TRUE);
         hdt.addListener(this);
+        this.updateStatus("Loaded Pogo1250 Polars " + polar.getBuildTime() + "ms");
+        this.updateStatus("Performance Calcs ready");
     }
 
 
@@ -160,7 +164,8 @@ public class Calcs implements Data.Listener<Data.DataValue> {
     }
 */
 
-    public class Polar {
+    public static class Polar {
+        private static final Logger log = LoggerFactory.getLogger(Polar.class);
         String name;
         double[] tws;
         double[] twa;
@@ -182,8 +187,13 @@ public class Calcs implements Data.Listener<Data.DataValue> {
             fineTws = new double[(int)(tws[tws.length-1]/twsstep)];
             fineTwa = new double[(int)(twa[twa.length-1]/twastep)];
             fineStw = new double[fineTws.length*fineTwa.length];
-            System.err.println("Build took " + this.buildFilePolarTable());
+            long buildtime = this.buildFilePolarTable();
+            log.info("Build took {} ms ",buildtime);
 
+        }
+
+        public long getBuildTime() {
+            return endFileBuild - startFineBuild;
         }
 
         private void checkInput() {

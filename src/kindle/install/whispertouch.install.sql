@@ -1,1 +1,1 @@
-INSERT OR IGNORE INTO "properties" VALUES('uk.co.tfd.kindle.helloworld','whisper-touch','supported');
+INSERT OR IGNORE INTO "properties" VALUES('uk.co.tfd.kindle.signalk','whisper-touch','supported');

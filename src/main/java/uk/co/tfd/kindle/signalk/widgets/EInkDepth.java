@@ -6,24 +6,23 @@ import java.text.DecimalFormat;
 import java.util.Map;
 
 /**
- * Created by ieb on 15/06/2020.
+ * Created by ieb on 20/06/2020.
  */
-public class EInkSpeed extends EInkTextBox {
+public class EInkDepth extends EInkTextBox {
 
-    public EInkSpeed(boolean rotate, Map<String, Object> options, Data.DisplayUnits displayUnits, Data.Store store) {
+    public EInkDepth(boolean rotate, Map<String, Object> options, Data.DisplayUnits displayUnits, Data.Store store) {
         super(rotate, updateOptions(options), displayUnits, store );
     }
 
     private static Map<String, Object> updateOptions(Map<String, Object> options) {
-        ((Map<String, String> )options.get("labels")).put("br", "kn");
-        options.put("dataType", Data.DataType.SPEED);
+        ((Map<String, String> )options.get("labels")).put("br", "m");
         options.put("withStats", true);
-        options.put("dataFormat", new DecimalFormat("#0.0"));
+        options.put("dataFormat", new DecimalFormat("#0.00"));
         return options;
     }
     @Override
     public void onUpdate(Data.DataValue d) {
-        if (Data.DataType.SPEED.equals(d.key.type) ) {
+        if (Data.DataType.DEPTH.equals(d.key.type) ) {
             super.onUpdate(d);
         }
     }

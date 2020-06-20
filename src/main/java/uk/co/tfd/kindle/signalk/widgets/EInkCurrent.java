@@ -2,9 +2,11 @@ package uk.co.tfd.kindle.signalk.widgets;
 
 import uk.co.tfd.kindle.signalk.Data;
 
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static uk.co.tfd.kindle.signalk.Data.CurrentDataValue;
@@ -21,14 +23,17 @@ public class EInkCurrent extends EInkTextBox {
     private DecimalFormat driftFormat = new DecimalFormat("0.0 Kn");
     private DecimalFormat setFormat = new DecimalFormat("0.0 \u00B0T");
 
-    public EInkCurrent(boolean rotate, Map<String, Object> options, Data.DisplayUnits displayUnits) {
-        super(rotate, updateOptions(options), displayUnits );
+    public EInkCurrent(boolean rotate, Map<String, Object> options, Data.DisplayUnits displayUnits, Data.Store store) {
+        super(rotate, updateOptions(options), displayUnits, store );
     }
 
     private static Map<String, Object> updateOptions(Map<String, Object> options) {
         Map<String, String> labels = new HashMap<>();
         labels.put("bl","Current");
         options.put("labels",labels);
+        List<String> sources = new ArrayList<String>();
+        sources.add(Data.DataKey.ENVIRONMENT_CURRENT.id);
+        options.put("sources", sources);
         return options;
     }
 

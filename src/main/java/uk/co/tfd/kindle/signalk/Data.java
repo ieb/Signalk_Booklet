@@ -1,14 +1,19 @@
 package uk.co.tfd.kindle.signalk;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.swing.*;
-import javax.swing.Timer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by ieb on 10/06/2020.
@@ -202,7 +207,7 @@ public class Data {
 
     public static class LongitudeDisplay implements DataConversion {
 
-        DecimalFormat formatDeg = new DecimalFormat("00");
+        DecimalFormat formatDeg = new DecimalFormat("000");
         DecimalFormat formatMin = new DecimalFormat("00.000");
 
         @Override
@@ -271,7 +276,7 @@ public class Data {
 
 
     public static class DisplayUnits {
-
+        private static final Logger log = LoggerFactory.getLogger(DisplayUnits.class);
 
         private Map<DataType,DataConversion> conversions = new HashMap<DataType, DataConversion>();
 
@@ -283,7 +288,9 @@ public class Data {
             if ( conversions.containsKey(dataType) ) {
                 return conversions.get(dataType).convert(value, format);
             }
-            System.err.println("Conversion Not found for data type "+dataType+" "+value);
+            log.warn("Conversion Not found for data type {} {} ", dataType, value);
+            Exception e = new Exception("Traceback");
+            log.warn("Traceback",e);
             return format.format(value);
         }
     }
@@ -294,9 +301,12 @@ public class Data {
         void onUpdate(T d);
     }
 
-    public static class Observable {
+    public static class Observable extends StatusUpdates {
         private Listener[] listeners = new Listener[0];
         private Set<Listener> listenerSet = new HashSet<Listener>();
+        private long debounce = 500;
+        private long nextUpdate = 0;
+
         public void addListener(Listener l) {
             listenerSet.add(l);
             listeners = listenerSet.toArray(new Listener[listenerSet.size()]);
@@ -306,8 +316,12 @@ public class Data {
             listeners = listenerSet.toArray(new Listener[listenerSet.size()]);
         }
         protected void fireUpdate() {
-            for (Listener listener: listeners) {
-                listener.onUpdate(this);
+
+            if ( nextUpdate < System.currentTimeMillis()) {
+                nextUpdate = System.currentTimeMillis()+debounce;
+                for (Listener listener: listeners) {
+                    listener.onUpdate(this);
+                }
             }
         }
 
@@ -315,6 +329,7 @@ public class Data {
 
 
     public static class Store extends Observable {
+        private static final Logger log = LoggerFactory.getLogger(Store.class);
         Map<String, DataValue> state = new HashMap<String, DataValue>();
         private Timer timer;
 
@@ -374,6 +389,7 @@ public class Data {
                     }
                 }
             }
+            this.updateStatus("Store started");
         }
 
 
@@ -412,7 +428,7 @@ public class Data {
             if ( path != null ) {
                 DataValue dataValue = state.get(path);
                 if ( dataValue == null ) {
-                    System.err.println("Ignoring "+path+" "+value);
+                    log.warn("Ignoring {} {} ", path, value);
                 } else {
                     dataValue.update(value);
                 }
@@ -438,6 +454,7 @@ public class Data {
 
 
     public static class DataValue extends Observable {
+        private static final Logger log = LoggerFactory.getLogger(DataValue.class);
         String source;
         public final DataKey key;
         String text;
@@ -466,13 +483,13 @@ public class Data {
             try {
 
                 if ( dateString == null) {
-                    System.err.println("updateTimestamp() No timestamp found");
+                    log.warn("updateTimestamp() No timestamp found");
                     this.timestamp = System.currentTimeMillis();
                 } else {
                     this.timestamp = df.parse(dateString).getTime();
                 }
             } catch (ParseException e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
                 this.timestamp = System.currentTimeMillis();
             }
         }
@@ -484,7 +501,7 @@ public class Data {
             updateTimestamp((String) input.get("timestamp"));
             String newValue = String.valueOf(Util.resolve(input, "value", this.text));
             if ( "".equals(newValue) ) {
-                System.err.println("update() No text value found");
+                log.warn("update() No text value found");
             }
             this.source = "input";
             if ( !newValue.equals(this.text) ) {
@@ -535,6 +552,7 @@ public class Data {
     }
 
     public static class DoubleDataValue extends DataValue {
+        private static final Logger log = LoggerFactory.getLogger(DoubleDataValue.class);
         double value = 0.0;
         protected double[] values = new double[100];
         protected int ilast = 0;
@@ -581,7 +599,7 @@ public class Data {
             } else if ( o instanceof Double ) {
                 newValue = (double) o;
             } else {
-                System.err.println("Value not recognised in datavalue update "+input.get("value"));
+                log.warn("Value not recognised in datavalue update {} ", input.get("value"));
                 newValue = 0;
             }
             if ( newValue != this.value) {
