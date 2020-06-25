@@ -13,7 +13,7 @@
 otautils_update_progressbar
 
 logmsg "I" "uninstall" "" "uninstalling booklet"
-rm -f "/opt/amazon/ebook/booklet/SignalkBooklet.jar"
+rm -f "/opt/amazon/ebook/booklet/signalk_booklet.jar"
 
 otautils_update_progressbar
 

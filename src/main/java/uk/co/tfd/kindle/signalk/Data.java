@@ -29,70 +29,72 @@ public class Data {
 
     }
 
-    public enum DataKey {
+    public static class DataKey {
+        public static Map<String, DataKey> values = new HashMap<>();
 
 
-
-
-
-        NAVIGATION_MAGNETIC_VARIATION("navigation.magneticVariation",Unit.RAD, DataType.BEARING, "Magnetic Variation"),
-        NAVIGATION_HEADING_TRUE("navigation.headingTrue",Unit.RAD, DataType.BEARING, ""),
-        NAVIGATION_COURSE_OVER_GROUND_MAGNETIC("navigation.courseOverGroundMagnetic",Unit.RAD,DataType.BEARING, ""),
-        NAVIGATION_HEADING_MAGNETIC("navigation.headingMagnetic",Unit.RAD,DataType.BEARING, ""),
-        ENVIRONMENT_WIND_SPEED_APPARENT("environment.wind.speedApparent",Unit.MS,DataType.SPEED,""),
-        ENVIRONMENT_WIND_ANGLE_APPARENT("environment.wind.angleApparent",Unit.RAD,DataType.RELATIVEANGLE, ""),
-        ENVIRONMENT_WIND_ANGLE_TRUE_WATER("environment.wind.angleTrueWater",Unit.RAD,DataType.RELATIVEANGLE,""),
-        ENVIRONMENT_WIND_SPEED_TRUE("environment.wind.speedTrue",Unit.MS,DataType.SPEED,""),
-        PERFORMANCE_LEEWAY("performance.leeway",Unit.RAD,DataType.RELATIVEANGLE,""),
-        NAVIGATION_SPEED_THROUGH_WATER("navigation.speedThroughWater",Unit.MS,DataType.SPEED,""),
-        PERFORMANCE_POLAR_SPEED("performance.polarSpeed",Unit.MS,DataType.SPEED,""),
-        PERFORMANCE_POLAR_SPEED_RATIO("performance.polarSpeedRatio",Unit.RATIO,DataType.PERCENTAGE,""),
-        PERFORMANCE_POLAR_VMG("performance.polarVmg",Unit.MS,DataType.SPEED,""),
-        PERFORMANCE_TARGET_TWA("performance.targetTwa",Unit.RAD,DataType.RELATIVEANGLE,""),
-        PERFORMANCE_TARGET_STW("performance.targetStw",Unit.MS,DataType.SPEED,""),
-        PERFORMANCE_TARGET_VMG("performance.targetVmg",Unit.MS,DataType.SPEED,""),
-        PERFORMANCE_POLAR_VMG_RATIO("performance.polarVmgRatio",Unit.RATIO,DataType.PERCENTAGE,""),
-        ENVIRONMENT_WIND_WIND_DIRECTION_TRUE("environment.wind.windDirectionTrue",Unit.RAD,DataType.BEARING,""),
-        ENVIRONMENT_WIND_WIND_DIRECTION_MAGNETIC("environment.wind.windDirectionMagnetic",Unit.RAD,DataType.BEARING,""),
-        PERFORMANCE_OPPOSITE_TRACK_TRUE("performance.oppositeTrackTrue",Unit.RAD,DataType.BEARING,""),
-        PERFORMANCE_OPPOSITE_TRACK_MAGNETIC("performance.oppositeTrackMagnetic",Unit.RAD,DataType.BEARING,""),
-        PERFORMANCE_OPPOSITE_HEADING_MAGNETIC("performance.oppositeHeadingMagnetic",Unit.RAD,DataType.BEARING,""),
-        NAVIGATION_COURSE_OVER_GROUND_TRUE("navigation.courseOverGroundTrue",Unit.RAD,DataType.BEARING,""),
-        PERFORMANCE_VMG("performance.vmg", Unit.MS,DataType.SPEED, "current vmg at polar speed"),
-        NAVIGATION_TRIP_LOG("navigation.trip.log", Unit.M, DataType.DISTANCE,"Trip"),
-        NAVIGATION_LOG("navigation.log", Unit.M, DataType.DISTANCE,"Log"),
-        NAVIGATION_DATETIME("navigation.datetime",Unit.TEXT,DataType.NONE,"Navigation time"),
-        NAVIGATION_GNSS("navigation.gnss", Unit.MAP, DataType.NONE,"GPS Status"),
-        STEERING_AUTOPILOT("steering.autopilot", Unit.MAP, DataType.NONE, "Auto pilot data"),
-        NAVIGATION_POSITION("navigation.position",Unit.MAP,DataType.NONE,"Lat Long"),
-        ENVIRONMENT_CURRENT("environment.current",Unit.MAP,DataType.NONE,"Set Drift"),
-        NAVIGATION_ATTITUDE("navigation.attitude",Unit.MAP,DataType.NONE,"Pitch Roll"),
-        NAVIGATION_RATEOFTURN("navigation.rateOfTurn",Unit.RAD,DataType.RELATIVEANGLE,"Rate of turn, radians/s"),
-        STEERING_RUDDERANGLE("steering.rudderAngle",Unit.RAD,DataType.RELATIVEANGLE,"Rudder angle"),
-        NAVIGATION_SPEEDOVERGROUND("navigation.speedOverGround",Unit.MS,DataType.SPEED,"Sog"),
-        ENVIRONMENT_WATER_TEMPERATURE("environment.water.temperature",Unit.K,DataType.TEMPERATURE,"Water Temperature"),
-        NAVIGATION_SPEEDTHROUGHWATERREFERENCETYPE("navigation.speedThroughWaterReferenceType",Unit.TEXT,DataType.NONE,"Sensor Type"),
-        ENVIRONMENT_DEPTH_BELOWTRANSDUCER("environment.depth.belowTransducer",Unit.M,DataType.DEPTH,"Depth")
-        ;
+        public static DataKey NAVIGATION_MAGNETIC_VARIATION = new DataKey("navigation.magneticVariation",Unit.RAD, DataType.BEARING, "Magnetic Variation");
+        public static DataKey NAVIGATION_HEADING_TRUE = new DataKey("navigation.headingTrue",Unit.RAD, DataType.BEARING, "");
+        public static DataKey NAVIGATION_COURSE_OVER_GROUND_MAGNETIC = new DataKey("navigation.courseOverGroundMagnetic",Unit.RAD,DataType.BEARING, "");
+        public static DataKey NAVIGATION_HEADING_MAGNETIC = new DataKey("navigation.headingMagnetic",Unit.RAD,DataType.BEARING, "");
+        public static DataKey ENVIRONMENT_WIND_SPEED_APPARENT = new DataKey("environment.wind.speedApparent",Unit.MS,DataType.SPEED,"");
+        public static DataKey ENVIRONMENT_WIND_ANGLE_APPARENT = new DataKey("environment.wind.angleApparent",Unit.RAD,DataType.RELATIVEANGLE, "");
+        public static DataKey ENVIRONMENT_WIND_ANGLE_TRUE_WATER = new DataKey("environment.wind.angleTrueWater",Unit.RAD,DataType.RELATIVEANGLE,"");
+        public static DataKey ENVIRONMENT_WIND_SPEED_TRUE = new DataKey("environment.wind.speedTrue",Unit.MS,DataType.SPEED,"");
+        public static DataKey PERFORMANCE_LEEWAY = new DataKey("performance.leeway",Unit.RAD,DataType.RELATIVEANGLE,"");
+        public static DataKey NAVIGATION_SPEED_THROUGH_WATER = new DataKey("navigation.speedThroughWater",Unit.MS,DataType.SPEED,"");
+        public static DataKey PERFORMANCE_POLAR_SPEED = new DataKey("performance.polarSpeed",Unit.MS,DataType.SPEED,"");
+        public static DataKey PERFORMANCE_POLAR_SPEED_RATIO = new DataKey("performance.polarSpeedRatio",Unit.RATIO,DataType.PERCENTAGE,"");
+        public static DataKey PERFORMANCE_POLAR_VMG = new DataKey("performance.polarVmg",Unit.MS,DataType.SPEED,"");
+        public static DataKey PERFORMANCE_TARGET_TWA = new DataKey("performance.targetTwa",Unit.RAD,DataType.RELATIVEANGLE,"");
+        public static DataKey PERFORMANCE_TARGET_STW = new DataKey("performance.targetStw",Unit.MS,DataType.SPEED,"");
+        public static DataKey PERFORMANCE_TARGET_VMG = new DataKey("performance.targetVmg",Unit.MS,DataType.SPEED,"");
+        public static DataKey PERFORMANCE_POLAR_VMG_RATIO = new DataKey("performance.polarVmgRatio",Unit.RATIO,DataType.PERCENTAGE,"");
+        public static DataKey ENVIRONMENT_WIND_WIND_DIRECTION_TRUE = new DataKey("environment.wind.windDirectionTrue",Unit.RAD,DataType.BEARING,"");
+        public static DataKey ENVIRONMENT_WIND_WIND_DIRECTION_MAGNETIC = new DataKey("environment.wind.windDirectionMagnetic",Unit.RAD,DataType.BEARING,"");
+        public static DataKey PERFORMANCE_OPPOSITE_TRACK_TRUE = new DataKey("performance.oppositeTrackTrue",Unit.RAD,DataType.BEARING,"");
+        public static DataKey PERFORMANCE_OPPOSITE_TRACK_MAGNETIC = new DataKey("performance.oppositeTrackMagnetic",Unit.RAD,DataType.BEARING,"");
+        public static DataKey PERFORMANCE_OPPOSITE_HEADING_MAGNETIC = new DataKey("performance.oppositeHeadingMagnetic",Unit.RAD,DataType.BEARING,"");
+        public static DataKey NAVIGATION_COURSE_OVER_GROUND_TRUE = new DataKey("navigation.courseOverGroundTrue",Unit.RAD,DataType.BEARING,"");
+        public static DataKey PERFORMANCE_VMG = new DataKey("performance.vmg", Unit.MS,DataType.SPEED, "current vmg at polar speed");
+        public static DataKey NAVIGATION_TRIP_LOG = new DataKey("navigation.trip.log", Unit.M, DataType.DISTANCE,"Trip");
+        public static DataKey NAVIGATION_LOG = new DataKey("navigation.log", Unit.M, DataType.DISTANCE,"Log");
+        public static DataKey NAVIGATION_DATETIME = new DataKey("navigation.datetime",Unit.TEXT,DataType.NONE,"Navigation time");
+        public static DataKey NAVIGATION_GNSS = new DataKey("navigation.gnss", Unit.MAP, DataType.NONE,"GPS Status");
+        public static DataKey STEERING_AUTOPILOT = new DataKey("steering.autopilot", Unit.MAP, DataType.NONE, "Auto pilot data");
+        public static DataKey NAVIGATION_POSITION = new DataKey("navigation.position",Unit.MAP,DataType.NONE,"Lat Long");
+        public static DataKey ENVIRONMENT_CURRENT = new DataKey("environment.current",Unit.MAP,DataType.NONE,"Set Drift");
+        public static DataKey NAVIGATION_ATTITUDE = new DataKey("navigation.attitude",Unit.MAP,DataType.NONE,"Pitch Roll");
+        public static DataKey NAVIGATION_RATEOFTURN = new DataKey("navigation.rateOfTurn",Unit.RAD,DataType.RELATIVEANGLE,"Rate of turn, radians/s");
+        public static DataKey STEERING_RUDDERANGLE = new DataKey("steering.rudderAngle",Unit.RAD,DataType.RELATIVEANGLE,"Rudder angle");
+        public static DataKey NAVIGATION_SPEEDOVERGROUND = new DataKey("navigation.speedOverGround",Unit.MS,DataType.SPEED,"Sog");
+        public static DataKey ENVIRONMENT_WATER_TEMPERATURE = new DataKey("environment.water.temperature",Unit.K,DataType.TEMPERATURE,"Water Temperature");
+        public static DataKey NAVIGATION_SPEEDTHROUGHWATERREFERENCETYPE = new DataKey("navigation.speedThroughWaterReferenceType",Unit.TEXT,DataType.NONE,"Sensor Type");
+        public static DataKey ENVIRONMENT_DEPTH_BELOWTRANSDUCER = new DataKey("environment.depth.belowTransducer",Unit.M,DataType.DEPTH,"Depth");
         public final String id;
         public final Unit units;
         public final String description;
         public final DataType type;
 
-        private DataKey(String id, Unit units, DataType type, String description) {
+        public DataKey(String id, Unit units, DataType type, String description) {
             this.id = id;
             this.units = units;
             this.description = description;
             this.type = type;
+            values.put(id, this);
         }
 
-        public static DataKey get(String id) {
-            for( DataKey k : DataKey.values()) {
-                if ( k.id.equals(id)) {
-                    return k;
-                }
+        @Override
+        public boolean equals(Object obj) {
+            if ( obj instanceof  DataKey ) {
+                return id.equals(((DataKey)obj).id);
             }
-            return null;
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            return id.hashCode();
         }
 
         @Override
@@ -380,7 +382,7 @@ public class Data {
             state.put(DataKey.NAVIGATION_POSITION.toString(), new PossitionDataValue((DataKey.NAVIGATION_POSITION)));
             state.put(DataKey.ENVIRONMENT_CURRENT.toString(), new CurrentDataValue((DataKey.ENVIRONMENT_CURRENT)));
             state.put(DataKey.NAVIGATION_ATTITUDE.toString(), new AttitudeDataValue((DataKey.NAVIGATION_ATTITUDE)));
-            for(DataKey k : DataKey.values()) {
+            for(DataKey k : DataKey.values.values()) {
                 if (!state.containsKey(k.toString())) {
                     if (Unit.RAD.equals(k.units)) {
                         state.put(k.toString(), new CircularDataValue(k));
@@ -446,6 +448,10 @@ public class Data {
         }
         public void stop() {
             timer.stop();
+        }
+
+        public void addConfiguration(Map<String, Object> configuration) {
+            // add any custom configuration here
         }
     }
 

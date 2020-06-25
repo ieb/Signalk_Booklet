@@ -1,19 +1,24 @@
 package uk.co.tfd.kindle.signalk;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.yaml.snakeyaml.Yaml;
 import uk.co.tfd.kindle.signalk.widgets.Instruments;
 
 import javax.swing.*;
-import java.awt.*;
+import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.GridLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Map;
 
 /**
@@ -27,36 +32,60 @@ public  class PageLayout extends JPanel {
     private final String configFile;
     private final CardLayout layout;
     private final Instruments instruments;
-    private boolean rotation;
     private int pressedAt;
     private int dragStartX;
     private int pagesCount;
     private int dragStartY;
 
-    private static final String DEFAULT_LAYOUT = "pages:\n" +
-            "-   id: page1\n" +
-            "    vspace: 5\n" +
-            "    hspace: 5\n" +
-            "    instruments:\n" +
-            "        - [ awa,       twa, stw,      psratio    ]\n" +
-            "        - [ aws,       tws, pstw,     pvmg   ]\n" +
-            "        - [ cogt,      sog, attitude, lee ]\n" +
-            "        - [ position, fix,  log,    dbt  ]\n" +
-            "-   id: page1\n" +
-            "    vspace: 5\n" +
-            "    hspace: 5\n" +
-            "    instruments:\n" +
-            "        - [ awa,       stw ]\n" +
-            "        - [ aws,       pstw ]\n" +
-            "-   id: page2\n" +
-            "    vspace: 5\n" +
-            "    hspace: 5\n" +
-            "    instruments:\n" +
-            "    # row 1\n" +
-            "        - [ awa, twa, blank, blank ]\n" +
-            "        - [ blank, blank, blank, blank ]\n" +
-            "        - [ blank, blank, blank, blank ]\n" +
-            "        - [ blank, blank, blank, blank ]\n";
+    private static final String DEFAULT_LAYOUT = "{\n" +
+            "   \"pages\" : [\n" +
+            "      {\n" +
+            "         \"instruments\" : [\n" +
+            "            [  \"awa\", \"twa\", \"stw\", \"psratio\" ],\n" +
+            "            [  \"aws\", \"tws\", \"pstw\",\"pvmg\"    ],\n" +
+            "            [  \"cogt\",\"sog\",\"attitude\",\"lee\"  ],\n" +
+            "            [  \"position\",\"fix\",\"log\",\"dbt\"   ]\n" +
+            "         ],\n" +
+            "         \"vspace\" : 5,\n" +
+            "         \"hspace\" : 5,\n" +
+            "         \"id\" : \"page1\"\n" +
+            "      },\n" +
+            "      {\n" +
+            "         \"vspace\" : 5,\n" +
+            "         \"instruments\" : [\n" +
+            "            [\"awa\", \"stw\" ],\n" +
+            "            [\"aws\", \"pstw\"]\n" +
+            "         ],\n" +
+            "         \"id\" : \"page2\",\n" +
+            "         \"hspace\" : 5\n" +
+            "      },\n" +
+            "      {\n" +
+            "         \"vspace\" : 5,\n" +
+            "         \"instruments\" : [\n" +
+            "            [\"awa\" ],\n" +
+            "            [\"aws\"]\n" +
+            "         ],\n" +
+            "         \"id\" : \"page4\",\n" +
+            "         \"hspace\" : 5\n" +
+            "      },\n" +
+            "      {\n" +
+            "         \"id\" : \"page3\",\n" +
+            "         \"hspace\" : 5,\n" +
+            "         \"vspace\" : 5,\n" +
+            "         \"instruments\" : [\n" +
+            "            [\"awa\", \"twa\", \"blank\", \"blank\" ],\n" +
+            "            [ \"blank\", \"blank\", \"blank\", \"blank\" ],\n" +
+            "            [ \"blank\", \"blank\", \"blank\", \"blank\" ],\n" +
+            "            [ \"blank\", \"blank\", \"blank\", \"blank\" ]\n" +
+            "         ]\n" +
+            "      }\n" +
+            "   ]\n" +
+            "}\n";
+    private Map<String, Object> configuration;
+    private java.util.List<Map<String, Object>> pageList = new ArrayList<Map<String, Object>>();
+    private boolean rotate = false;
+    private boolean dragging = false;
+    private JPanel control;
 
     public PageLayout(String configFile, Data.Store store) throws NoSuchMethodException {
         this.instruments = new Instruments();
@@ -64,7 +93,6 @@ public  class PageLayout extends JPanel {
         layout = new CardLayout();
         this.setLayout(layout);
         this.pageNo = 0;
-        this.rotation = false;
         this.store = store;
         this.configFile = configFile;
         this.addMouseListener(new MouseListener() {
@@ -74,9 +102,10 @@ public  class PageLayout extends JPanel {
 
             @Override
             public void mousePressed(MouseEvent e) {
-                dragStartX = e.getXOnScreen();
-                dragStartY = e.getYOnScreen();
-                log.debug("Clicked {} ",dragStartX);
+                dragStartX = e.getX();
+                dragStartY = e.getY();
+                log.debug("Clicked {} ", dragStartX);
+                dragging = true;
             }
 
             @Override
@@ -97,31 +126,60 @@ public  class PageLayout extends JPanel {
         this.addMouseMotionListener(new MouseMotionListener() {
             @Override
             public void mouseDragged(MouseEvent e) {
-                int distanceX = e.getXOnScreen() - dragStartX;
-                int distanceY = e.getYOnScreen() - dragStartY;
-                if ( distanceY < -100) {
-                    dragStartX  = e.getXOnScreen();
-                    dragStartY  = e.getYOnScreen();
-                    layout.show(PageLayout.this, "control");
+                if ( !dragging ) {
+                    log.debug("Not dragging");
+                    return;
                 }
-                if ( distanceX < -100 ) {
-                    dragStartX  = e.getXOnScreen();
-                    dragStartY  = e.getYOnScreen();
-                    pageNo--;
-                    if (pageNo < 0) {
-                        pageNo = pagesCount-1;
-                    }
-                    layout.show(PageLayout.this, "page" + pageNo);
+                int distanceX = e.getX() - dragStartX;
+                int distanceY = e.getY() - dragStartY;
+                log.debug("Dragging {} {}", distanceX, distanceY );
+                if (rotate) {
+                    if (distanceX < -200) {
+                        layout.show(PageLayout.this, "control");
+                        rotate = false;
+                        dragging = false;
+                    } else if (distanceY > 200) {
+                        pageNo--;
+                        if (pageNo < 0) {
+                            pageNo = pagesCount - 1;
+                        }
+                        layout.show(PageLayout.this, "page" + pageNo);
+                        rotate = Util.option(pageList.get(pageNo), "rotate", false);
+                        dragging = false;
 
-                } else if (distanceX > 100) {
-                    dragStartX  = e.getXOnScreen();
-                    dragStartY  = e.getYOnScreen();
-                    dragStartX  = e.getXOnScreen();
-                    pageNo++;
-                    if (pageNo == pagesCount) {
-                        pageNo = 0;
+                    } else if (distanceY < -200) {
+                        pageNo++;
+                        if (pageNo == pagesCount) {
+                            pageNo = 0;
+                        }
+                        layout.show(PageLayout.this, "page" + pageNo);
+                        rotate = Util.option(pageList.get(pageNo), "rotate", false);
+                        dragging = false;
                     }
-                    layout.show(PageLayout.this, "page"+pageNo);
+
+                } else {
+                    if (distanceY < -200) {
+                        layout.show(PageLayout.this, "control");
+                        rotate = false;
+                        dragging = false;
+                    } else if (distanceX < -200) {
+                        pageNo--;
+                        if (pageNo < 0) {
+                            pageNo = pagesCount - 1;
+                        }
+                        layout.show(PageLayout.this, "page" + pageNo);
+                        rotate = Util.option(pageList.get(pageNo), "rotate", false);
+                        dragging = false;
+
+                    } else if (distanceX > 200) {
+                        pageNo++;
+                        if (pageNo == pagesCount) {
+                            pageNo = 0;
+                        }
+                        layout.show(PageLayout.this, "page" + pageNo);
+                        rotate = Util.option(pageList.get(pageNo), "rotate", false);
+                        dragging = false;
+                    }
                 }
             }
 
@@ -133,49 +191,117 @@ public  class PageLayout extends JPanel {
 
     }
 
-    public void addControl(Component control) {
+    public void addControl(JPanel control) {
+        this.control = control;
         this.add("control", control);
     }
 
     public  String loadConfig() throws IOException, ParseException {
         File f = new File(configFile);
-        Map<String, Object> configuration;
-        Yaml yaml = new Yaml();
+        JSONParser jsonParser = new JSONParser();
         String loaded;
         if ( f.exists() )  {
             loaded = f.getAbsolutePath();
             log.info("Loading config file {} ", f.getAbsolutePath());
             FileReader config = new FileReader(f);
-            configuration = yaml.load(config);
+            configuration = (Map<String, Object>) jsonParser.parse(config);
             config.close();
         } else {
             loaded = "defaults";
             log.info("Loading defaults ");
-            configuration = yaml.load(DEFAULT_LAYOUT);
+            configuration = (Map<String, Object>) jsonParser.parse(DEFAULT_LAYOUT);
         }
+        System.err.println(JSONObject.toJSONString(configuration));
+        store.addConfiguration(configuration);
+
+        refresh();
+
+        return loaded;
+
+    }
+
+    public Map<String, Object> getConfiguration() {
+        return configuration;
+    }
+
+
+    private void refresh() {
 
         java.util.List<Map<String, Object>> pages = (java.util.List<Map<String, Object>>) configuration.get("pages");
         pagesCount = 0;
         for (Map<String, Object> page : pages) {
-            JPanel card = new JPanel();
+            Card card = new Card();
+            pageList.add(page);
+            page.put("card", card);
             this.add("page" + pagesCount, card);
             pagesCount++;
             int i = 0;
+            boolean rotatePage = Util.option(page, "rotate", false);
             java.util.List<java.util.List<String>> grid = (java.util.List<java.util.List<String>>) page.get("instruments");
-            int rows = grid.size();
-            int columns = grid.get(0).size();
-            int hgap = Util.option(page, "hspace", 10);
-            int vgap = Util.option(page, "vspace", 10);
-            card.setLayout(new GridLayout((int)rows, (int)columns, (int)hgap, (int)vgap));
+            int nrows = grid.size();
+            int ncols = grid.get(0).size();
+            long hgap = Util.option(page, "hspace", 10L);
+            long vgap = Util.option(page, "vspace", 10L);
+            if ( rotatePage ) {
+                card.setLayout(new GridLayout((int) ncols, (int) nrows, (int) hgap, (int) vgap));
+            } else {
+                card.setLayout(new GridLayout((int) nrows, (int) ncols, (int) hgap, (int) vgap));
+            }
 
-            for(java.util.List<String> row : grid) {
-                for (String col : row) {
-                    log.debug("Adding {}  ", col);
-                    card.add(instruments.create(col, rotation, displayUnits, store), i++);
+            if ( rotatePage ) {
+                for (int c = ncols-1 ; c >= 0; c--) {
+                    for (int r = 0 ; r < nrows; r++) {
+                        String name = grid.get(r).get(c);
+                        log.info("Adding Rotated {} {} {}  ", r, c, name);
+                        card.add(instruments.create(name, rotatePage, displayUnits, store), i++);
+                    }
+
+                }
+
+            } else {
+                for (int r = 0 ; r < nrows; r++) {
+                    for (int c = 0 ; c < ncols; c++) {
+                        String name = grid.get(r).get(c);
+                        log.info("Adding {} {} {}  ", r, c,  name);
+                        card.add(instruments.create(name, rotatePage, displayUnits, store), i++);
+                    }
                 }
             }
         }
-        return loaded;
+    }
 
+    @Override
+    public void setForeground(Color fg) {
+        super.setForeground(fg);
+        for(Component c: this.getComponents()) {
+            c.setForeground(fg);
+        }
+    }
+
+    @Override
+    public void setBackground(Color bg) {
+        super.setBackground(bg);
+        for(Component c: this.getComponents()) {
+            c.setBackground(bg);
+        }
+    }
+
+
+    private class Card extends JPanel {
+        @Override
+        public void setForeground(Color fg) {
+            super.setForeground(fg);
+            for(Component c: this.getComponents()) {
+                c.setForeground(fg);
+            }
+        }
+
+        @Override
+        public void setBackground(Color bg) {
+            super.setBackground(bg);
+            for(Component c: this.getComponents()) {
+                c.setBackground(bg);
+            }
+        }
     }
 }

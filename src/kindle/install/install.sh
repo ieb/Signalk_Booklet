@@ -13,7 +13,7 @@
 otautils_update_progressbar
 
 logmsg "I" "install" "" "installing booklet"
-cp -f "SignalkBooklet.jar" "/opt/amazon/ebook/booklet/SignalkBooklet.jar"
+cp -f "signalk_booklet.jar" "/opt/amazon/ebook/booklet/signalk_booklet.jar"
 
 otautils_update_progressbar
 

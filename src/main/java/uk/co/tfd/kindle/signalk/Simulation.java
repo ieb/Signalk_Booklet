@@ -2,8 +2,6 @@ package uk.co.tfd.kindle.signalk;
 
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.yaml.snakeyaml.DumperOptions;
-import org.yaml.snakeyaml.Yaml;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -29,20 +27,9 @@ public class Simulation {
         System.err.println("Loading config file " + f.getAbsolutePath());
         FileReader config = new FileReader(f);
         Map<String, Object> simulationDataSet = null;
-        if ( simulationFile.endsWith(".yaml")) {
-            Yaml yaml = new Yaml();
-            simulationDataSet = yaml.load(config);
-        } else {
-            JSONParser jsonParser = new JSONParser();
-            simulationDataSet = (Map<String, Object>) jsonParser.parse(config);
-            DumperOptions options = new DumperOptions();
-            options.setWidth(80);
-            options.setIndent(4);
-            options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-            Yaml yaml = new Yaml(options);
-            System.err.println(yaml.dump(simulationDataSet));
+        JSONParser jsonParser = new JSONParser();
+        simulationDataSet = (Map<String, Object>) jsonParser.parse(config);
 
-        }
         config.close();
         messages = (List<Map<String, Object>>) simulationDataSet.get("messages");
         messageNo = -1;

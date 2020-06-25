@@ -1,242 +1,62 @@
 {
-
-  "keys" : [
-    "navigation.magneticVariation",
-    "navigation.headingTrue",
-    "navigation.courseOverGroundMagnetic",
-    "navigation.headingMagnetic",
-    "environment.wind.speedApparent",
-    "environment.wind.angleApparent",
-    "environment.wind.angleTrueWater",
-    "environment.wind.speedTrue",
-    "performance.leeway",
-    "navigation.speedThroughWater",
-    "performance.polarSpeed",
-    "performance.polarSpeedRatio",
-    "performance.polarVmg",
-    "performance.targetTwa",
-    "performance.targetStw",
-    "performance.targetVmg",
-    "performance.polarVmgRatio",
-    "environment.wind.windDirectionTrue",
-    "environment.wind.windDirectionMagnetic",
-    "performance.oppositeTrackTrue",
-    "performance.oppositeTrackMagnetic",
-    "performance.oppositeHeadingMagnetic",
-    "navigation.courseOverGroundTrue",
-    "performance.vmg",
-    "navigation.trip.log",
-    "navigation.log",
-    "navigation.datetime",
-    "navigation.gnss",
-    "steering.autopilot",
-    "navigation.position",
-    "environment.current",
-    "navigation.attitude"
-    ]
-  ,
+  "servers" : [
+    {
+      "host": "192.168.4.1",
+      "port": 8375
+    },
+    {
+      "host": "192.168.1.134",
+      "port": 8375
+    },
+    {
+      "host": "x43543-3.local",
+      "port": 8375
+    }
+  ],
+  "screensize": { "w":1072, "h":1448 },
   "pages" : [
     {
-      "id": "page1",
-      "rows": 4,
-      "cols": 4,
-      "hspace": 5,
-      "vspace": 5,
       "instruments" : [
-        {
-          "type": "EInkSpeed",
-          "options": {
-            "labels" : {
-              "bl":"aws1"
-            }
-
-          },
-          "sources": [
-            "environment.wind.speedApparent"
-          ]
-        },
-        {
-          "type": "EInkRelativeAngle",
-          "options": {
-            "labels" : {
-              "bl":"awa2"
-            }
-
-          },
-          "sources": [
-            "environment.wind.angleApparent"
-          ]
-        },
-        {
-          "type": "EInkRelativeAngle",
-          "options": {
-            "labels" : {
-              "bl":"twa3"
-            }
-
-          },
-          "sources": [
-            "environment.wind.angleTrueWater"
-          ]
-        },
-        {
-          "type": "EInkSpeed",
-          "options": {
-            "labels" : {
-              "bl":"tws4"
-            }
-
-          },
-          "sources": [
-            "environment.wind.speedTrue"
-          ]
-        },
-        {
-          "type": "EInkSpeed",
-          "options": {
-            "labels" : {
-              "bl":"stw5"
-            }
-
-          },
-          "sources": [
-            "navigation.speedThroughWater"
-          ]
-        },
-        {
-          "type": "EInkRelativeAngle",
-          "options": {
-            "labels" : {
-              "bl":"awa6"
-            }
-
-          },
-          "sources": [
-            "environment.wind.angleApparent"
-          ]
-        },
-        {
-          "type": "EInkRelativeAngle",
-          "options": {
-            "labels" : {
-              "bl":"twa7"
-            }
-
-          },
-          "sources": [
-            "environment.wind.angleTrueWater"
-          ]
-        },
-        {
-          "type": "EInkSpeed",
-          "options": {
-            "labels" : {
-              "bl":"tws8"
-            }
-
-          },
-          "sources": [
-            "environment.wind.speedTrue"
-          ]
-        },
-        {
-          "type": "EInkSpeed",
-          "options": {
-            "labels" : {
-              "bl":"aws9"
-            }
-
-          },
-          "sources": [
-            "environment.wind.speedApparent"
-          ]
-        },
-        {
-          "type": "EInkRelativeAngle",
-          "options": {
-            "labels" : {
-              "bl":"awa10"
-            }
-
-          },
-          "sources": [
-            "environment.wind.angleApparent"
-          ]
-        },
-        {
-          "type": "EInkRelativeAngle",
-          "options": {
-            "labels" : {
-              "bl":"twa11"
-            }
-
-          },
-          "sources": [
-            "environment.wind.angleTrueWater"
-          ]
-        },
-        {
-          "type": "EInkSpeed",
-          "options": {
-            "labels" : {
-              "bl":"tws12"
-            }
-
-          },
-          "sources": [
-            "environment.wind.speedTrue"
-          ]
-        },
-        {
-          "type": "EInkSpeed",
-          "options": {
-            "labels" : {
-              "bl":"stw13"
-            }
-
-          },
-          "sources": [
-            "navigation.speedThroughWater"
-          ]
-        },
-        {
-          "type": "EInkRelativeAngle",
-          "options": {
-            "labels" : {
-              "bl":"awa14"
-            }
-
-          },
-          "sources": [
-            "environment.wind.angleApparent"
-          ]
-        },
-        {
-          "type": "EInkRelativeAngle",
-          "options": {
-            "labels" : {
-              "bl":"twa15"
-            }
-
-          },
-          "sources": [
-            "environment.wind.angleTrueWater"
-          ]
-        },
-        {
-          "type": "EInkSpeed",
-          "options": {
-            "labels" : {
-              "bl":"tws16"
-            }
-
-          },
-          "sources": [
-            "environment.wind.speedTrue"
-          ]
-        }
+        [ "awa", "twa", "stw", "psratio" ], 
+        [ "aws", "tws", "pstw", "pvmg" ], 
+        [ "cogt", "sog", "attitude", "lee" ], 
+        [ "position", "fix", "log", "dbt" ],
+        [ "position", "fix", "log", "dbt" ]
+      ],
+      "vspace" : 5,
+      "hspace" : 5,
+      "id" : "page1",
+      "rotate": true
+    },
+    {
+      "vspace" : 5,
+      "instruments" : [
+        [ "awa" ],
+        [ "aws" ]
+      ],
+      "id" : "page2",
+      "hspace" : 5
+    },
+    {
+      "id" : "page3",
+      "hspace" : 5,
+      "vspace" : 5,
+      "instruments" : [
+        [ "awa", "twa" ],
+        [ "blank", "blank" ],
+        [ "blank", "blank" ],
+        [ "blank", "blank" ]
+      ]
+    },
+    {
+      "id" : "page6",
+      "hspace" : 5,
+      "vspace" : 5,
+      "rotate": true,
+      "instruments" : [
+        [ "awa", "twa" ],
+        [ "blank", "blank" ]
       ]
     }
-
   ]
 }

@@ -40,18 +40,21 @@
         </configuration>
       </plugin>
 
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
         <executions>
           <execution>
-            <id>copy-dependencies</id>
+            <id>unpack-dependencies</id>
             <phase>prepare-package</phase>
             <goals>
-              <goal>copy-dependencies</goal>
+              <goal>unpack-dependencies</goal>
             </goals>
             <configuration>
-              <outputDirectory>${project.build.directory}/lib</outputDirectory>
+              <excludes>**</excludes>
+              <excludes>META-INF/MANIFEST.MF</excludes>
+              <outputDirectory>${project.build.directory}/classes</outputDirectory>
               <overWriteReleases>false</overWriteReleases>
               <overWriteSnapshots>false</overWriteSnapshots>
               <overWriteIfNewer>true</overWriteIfNewer>
@@ -232,12 +235,6 @@
     </plugins>
   </build>
   <dependencies>
-    <dependency>
-      <groupId>org.yaml</groupId>
-      <artifactId>snakeyaml</artifactId>
-      <version>1.26</version>
-      <scope>compile</scope>
-    </dependency>
       <dependency>
           <groupId>org.jmdns</groupId>
           <artifactId>jmdns</artifactId>
@@ -287,5 +284,21 @@
       <scope>system</scope>
       <systemPath>${project.basedir}/opt_amazon_ebook/lib/utilities.jar</systemPath>
     </dependency>
+    <dependency>
+      <groupId>kindle-sdk</groupId>
+      <artifactId>kafui</artifactId>
+      <version>1.0.0</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/opt_amazon_ebook/lib/kafui.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>kindle-sdk</groupId>
+      <artifactId>testBook</artifactId>
+      <version>1.0.0</version>
+      <scope>system</scope>
+      <systemPath>/Users/ieb/timefields/kindle/Signalk_Booklet/test/ebook/lib/testBook.jar</systemPath>
+    </dependency>
+
+
   </dependencies>
 </project>

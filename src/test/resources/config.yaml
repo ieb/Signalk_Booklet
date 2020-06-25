@@ -7,13 +7,13 @@ pages:
         - [ aws,       tws, pstw,     pvmg   ]
         - [ cogt,      sog, attitude, lee ]
         - [ position, fix,  log,    dbt  ]
--   id: page1
+-   id: page2
     vspace: 5
     hspace: 5
     instruments:
         - [ awa,       stw ]
         - [ aws,       pstw ]
--   id: page2
+-   id: page3
     vspace: 5
     hspace: 5
     instruments:
@@ -22,56 +22,5 @@ pages:
         - [ blank, blank, blank, blank ]
         - [ blank, blank, blank, blank ]
         - [ blank, blank, blank, blank ]
-
-
-availableKeys: |
-    map.put("awa", new Instrument("awa", EInkRelativeAngle.class, "environment.wind.angleApparent"));
-    map.put("aws", new Instrument("aws", EInkSpeed.class, "environment.wind.speedApparent"));
-    map.put("twa", new Instrument("twa", EInkRelativeAngle.class, "environment.wind.angleTrueWater"));
-    map.put("tws", new Instrument("tws", EInkSpeed.class, "environment.wind.speedTrue"));
-    map.put("stw", new Instrument("stw", EInkSpeed.class, "navigation.speedThroughWater"));
-    map.put("dbt", new Instrument("dbt", EInkDistance.class, "environment.depth.belowTransducer"));
-    map.put("vmg", new Instrument("vmg", EInkSpeed.class, "performance.vmg"));
-    map.put("var", new Instrument("var", EInkRelativeAngle.class, "navigation.magneticVariation"));
-    map.put("hdt", new Instrument("hdt", EInkBearing.class, "navigation.headingTrue"));
-    map.put("cogm", new Instrument("cogm", EInkBearing.class, "navigation.courseOverGroundMagnetic"));
-    map.put("hdm", new Instrument("hdm", EInkBearing.class, "navigation.headingMagnetic"));
-    map.put("lee", new Instrument("lee", EInkRelativeAngle.class, "performance.leeway"));
-    map.put("pstw", new Instrument("pstw", EInkSpeed.class, "performance.polarSpeed"));
-    map.put("psratio", new Instrument("psratio", EInkRatio.class, "performance.polarSpeedRatio"));
-    map.put("pvmg", new Instrument("pvmg", EInkSpeed.class, "performance.polarVmg"));
-    map.put("ttwa", new Instrument("ttwa", EInkRelativeAngle.class, "performance.targetTwa"));
-    map.put("tstw", new Instrument("tstw", EInkSpeed.class, "performance.targetStw"));
-    map.put("tvmg", new Instrument("tvmg", EInkSpeed.class, "performance.targetVmg"));
-    map.put("pvmgr", new Instrument("pvmgr", EInkRatio.class, "performance.polarVmgRatio"));
-    map.put("twdt", new Instrument("twdt", EInkBearing.class, "environment.wind.windDirectionTrue"));
-    map.put("twdm", new Instrument("twdm", EInkBearing.class, "environment.wind.windDirectionMagnetic"));
-    map.put("tackt", new Instrument("tackt", EInkBearing.class, "performance.oppositeTrackTrue"));
-    map.put("tackm", new Instrument("tackm", EInkBearing.class, "performance.oppositeTrackMagnetic"));
-    map.put("ophdm", new Instrument("ophdm", EInkBearing.class, "performance.oppositeHeadingMagnetic"));
-    map.put("cogt", new Instrument("cogt", EInkBearing.class, "navigation.courseOverGroundTrue"));
-    map.put("rot", new Instrument("rot", EInkRelativeAngle.class, "navigation.rateOfTurn"));
-    map.put("rudder", new Instrument("rudder", EInkRelativeAngle.class, "steering.rudderAngle"));
-    map.put("sog", new Instrument("sog", EInkSpeed.class, "navigation.speedOverGround"));
-    map.put("twater", new Instrument("twater", EInkTemperature.class, "environment.water.temperature"));
-    map.put("stwref", new Instrument("stwref", EInkTextBox.class, "navigation.speedThroughWaterReferenceType"));
-    blank = new Instrument("blank",EInkTextBox.class);
-    navigation.trip.log
-    navigation.log
-    map.put("log", new Instrument(EInkLog.class));
-    navigation.attitude
-    map.put("attitude", new Instrument(EInkAttitude.class));
-    environment.current
-    map.put("current", new Instrument(EInkCurrent.class));
-    navigation.gnss
-    map.put("fix", new Instrument(EInkFix.class));
-    steering.autopilot
-    map.put("pilot", new Instrument(EInkPilot.class));
-    navigation.datetime
-    navigation.gnss
-    map.put("position", new Instrument(EInkPossition.class));- navigation.magneticVariation
-
-
-
 
 

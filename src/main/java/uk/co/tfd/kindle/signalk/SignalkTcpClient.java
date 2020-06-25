@@ -17,6 +17,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by ieb on 19/06/2020.
@@ -24,66 +26,81 @@ import java.util.Map;
 public class SignalkTcpClient extends StatusUpdates implements ServiceListener {
     private static final Logger log = LoggerFactory.getLogger(SignalkTcpClient.class);
     public static final String SIGNALK_TCP_TCP_LOCAL = "_signalk-tcp._tcp.local.";
+    private final List<Map<String, Object>> servers;
+    private int serverNo = -1;
     private JmDNS jmdns;
     private final Data.Store store;
     private boolean stayConnected;
     private boolean running;
 
-    public SignalkTcpClient(Data.Store store) throws IOException {
+    public SignalkTcpClient(Data.Store store, Map<String, Object> config) throws IOException {
         this.store = store;
+        this.servers = (List<Map<String, Object>>) config.get("servers");
+
     }
 
     public void startDiscovery() throws IOException {
-        InetAddress in = null;
+        if ( this.servers != null ) {
+            serverNo = (serverNo+1)%servers.size();
+            Map<String, Object> server = servers.get(serverNo);
+            String host = (String) server.get("host");
+            long port = (long) server.get("port");
+            InetAddress address = InetAddress.getByName(host);
+            connect(address, (int)port);
+        } else {
+            InetAddress in = null;
 
-        // find the lowest numbered ingerface that supports multicast and is up.
-        // this is on the basis that default interfaces will be first.
-        List<NetworkInterface> interfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
-        interfaces.sort(new Comparator<NetworkInterface>() {
-            @Override
-            public int compare(NetworkInterface o1, NetworkInterface o2) {
-                return o1.getIndex() - o2.getIndex();
-            }
-        });
-        for (NetworkInterface intf : interfaces) {
-            log.debug("Interface {} ", intf);
-            if ( intf.isUp() && intf.supportsMulticast() && !intf.isLoopback() ) {
-                String name = intf.getName();
-                // only use names that are expected to be connected to a valid network.
-                if (name.startsWith("en") || name.startsWith("wlan") || name.startsWith("eth")) {
-                    for ( InterfaceAddress addr : intf.getInterfaceAddresses()) {
-                        InetAddress inaddr = addr.getAddress();
-                        if (inaddr instanceof Inet4Address) {
-                            in = inaddr;
-                            this.updateStatus("Discovering Signalk Server on "+in+" "+name);
-                            break;
+            // find the lowest numbered ingerface that supports multicast and is up.
+            // this is on the basis that default interfaces will be first.
+            List<NetworkInterface> interfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
+            interfaces.sort(new Comparator<NetworkInterface>() {
+                @Override
+                public int compare(NetworkInterface o1, NetworkInterface o2) {
+                    return o1.getIndex() - o2.getIndex();
+                }
+            });
+            for (NetworkInterface intf : interfaces) {
+                log.debug("Interface {} ", intf);
+                if (intf.isUp() && intf.supportsMulticast() && !intf.isLoopback()) {
+                    String name = intf.getName();
+                    // only use names that are expected to be connected to a valid network.
+                    if (name.startsWith("en") || name.startsWith("wlan") || name.startsWith("eth")) {
+                        for (InterfaceAddress addr : intf.getInterfaceAddresses()) {
+                            InetAddress inaddr = addr.getAddress();
+                            if (inaddr instanceof Inet4Address) {
+                                in = inaddr;
+                                this.updateStatus("Discovering Signalk Server on " + in + " " + name);
+                                break;
+                            }
                         }
                     }
+                    if (in != null) {
+                        break;
+                    }
                 }
-                if ( in != null ) {
-                    break;
-                }
+
+            }
+            if (in == null) {
+                in = InetAddress.getLocalHost();
+                this.updateStatus("Discovering Signalk Server default interface " + in);
             }
 
-        }
-        if ( in == null) {
-            in = InetAddress.getLocalHost();
-            this.updateStatus("Discovering Signalk Server default interface "+in);
-        }
+            jmdns = JmDNS.create(in);
 
-        jmdns = JmDNS.create(in);
-
-        jmdns.addServiceListener(SIGNALK_TCP_TCP_LOCAL, this);
+            jmdns.addServiceListener(SIGNALK_TCP_TCP_LOCAL, this);
+        }
 
     }
 
     public void endDiscovery() {
-        jmdns.removeServiceListener(SIGNALK_TCP_TCP_LOCAL, this);
-        try {
-            jmdns.close();
-            jmdns = null;
-        } catch (IOException e) {
-            log.error("Failed to end discovery",e);
+        if ( this.servers != null ) {
+            jmdns.removeServiceListener(SIGNALK_TCP_TCP_LOCAL, this);
+            try {
+                jmdns.close();
+                jmdns = null;
+            } catch (IOException e) {
+                log.error("Failed to end discovery", e);
+            }
         }
 
     }
@@ -133,16 +150,21 @@ public class SignalkTcpClient extends StatusUpdates implements ServiceListener {
 
 
     private void connect(ServiceEvent serviceEvent) {
+        InetAddress address = serviceEvent.getInfo().getInet4Addresses()[0];
+        int port = serviceEvent.getInfo().getPort();
+        connect(address, port);
+    }
+    private void connect(InetAddress address, int port) {
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
                 Socket socket = null;
                 try {
-                    InetAddress address = serviceEvent.getInfo().getInet4Addresses()[0];
-                    int port = serviceEvent.getInfo().getPort();
                     SignalkTcpClient.this.updateStatus(" Connecting to " + address + " " + port);
 
-                    socket = new Socket(address, port);
+                    socket = new Socket();
+                    socket.connect(new InetSocketAddress(address, port), 5000);
+                    socket.setSoTimeout(5000);
                     SignalkTcpClient.this.updateStatus(" Connected to " + address + " " + port);
                     BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     JSONParser parser = new JSONParser();

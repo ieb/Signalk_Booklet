@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -19,6 +20,8 @@ public class Main {
     private static Timer timer;
 
     public static void main(String[] args) throws ParseException, IOException, NoSuchMethodException {
+        Util.setKindle(false); // Kindle AWT implementation has some non standard behaviour.
+        Util.setScreenResolution(Toolkit.getDefaultToolkit().getScreenResolution());
 
         System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "info");
         System.setProperty("org.slf4j.simpleLogger.logFile","System.err");
@@ -26,7 +29,7 @@ public class Main {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 600);
         MainScreen mainScreen = new MainScreen(frame,
-                "src/test/resources/config.yaml",
+                "src/test/resources/config.json",
                 new MainScreen.MainScreenExit() {
             @Override
             public void exit() {

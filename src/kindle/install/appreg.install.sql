@@ -1,6 +1,6 @@
 INSERT OR IGNORE INTO "handlerIds" VALUES('uk.co.tfd.kindle.signalk');
 INSERT OR IGNORE INTO "properties" VALUES('uk.co.tfd.kindle.signalk','lipcId','uk.co.tfd.kindle.signalk');
-INSERT OR IGNORE INTO "properties" VALUES('uk.co.tfd.kindle.signalk','jar','/opt/amazon/ebook/booklet/SignalkBooklet.jar');
+INSERT OR IGNORE INTO "properties" VALUES('uk.co.tfd.kindle.signalk','jar','/opt/amazon/ebook/booklet/signalk_booklet.jar');
 
 INSERT OR IGNORE INTO "properties" VALUES('uk.co.tfd.kindle.signalk','maxUnloadTime','45');
 INSERT OR IGNORE INTO "properties" VALUES('uk.co.tfd.kindle.signalk','maxGoTime','60');

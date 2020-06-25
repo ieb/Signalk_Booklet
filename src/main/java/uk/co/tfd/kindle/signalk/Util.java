@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
+import java.awt.font.TextAttribute;
 import java.awt.geom.Rectangle2D;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -20,52 +21,55 @@ import java.util.Map;
 public class Util {
 
     private static final Logger log = LoggerFactory.getLogger(Util.class);
+    private static boolean kindle;
+    public static int DEFAULT_SCREEN_RESOLUTION = 111;
+    private static int screenResolution = DEFAULT_SCREEN_RESOLUTION; // default for awt on OSX.
 
 
-	public static BookletContext obGetBookletContext(int j, AbstractBooklet booklet){
+    public static BookletContext obGetBookletContext(int j, AbstractBooklet booklet){
 		BookletContext bc = null;
 		Method[] methods = AbstractBooklet.class.getDeclaredMethods();
 		for (int i = 0; i < methods.length; i++) {
 			if (methods[i].getReturnType() == BookletContext.class) {
 				// Double check that it takes no arguments, too...
-                log.debug("OOOOOOOOOOOOOOOOOOOOOOOOOOO");
+                System.err.println("OOOOOOOOOOOOOOOOOOOOOOOOOOO");
 				Class[] params = methods[i].getParameterTypes();
-                log.debug("OOOOOOOOOOOOOOOOOOOOOOOOOOO");
+                System.err.println("OOOOOOOOOOOOOOOOOOOOOOOOOOO");
 				if (params.length == 0) {
 					try {
-                        log.debug("{}",i);
-                        log.debug("{}",methods[i]);
-                        log.debug("{}",methods[i].getReturnType().getName());
-                        log.debug("{}",methods[i].getName());
-                        log.debug("{}",methods[i].getParameterCount());
-                        log.debug("{}",booklet);
-                        log.debug("---------------------------------------");
+                        System.err.println(i);
+                        System.err.println(methods[i]);
+                        System.err.println(methods[i].getReturnType().getName());
+                        System.err.println(methods[i].getName());
+                        System.err.println(methods[i].getParameterCount());
+                        System.err.println(booklet);
+                        System.err.println("---------------------------------------");
 						bc = (BookletContext) methods[i].invoke(booklet, null);
-                        log.debug("OOOOOOOOOOOOOOOOOOOOOOOOOOO");
-                        log.debug("{}",bc);
+                        System.err.println("OOOOOOOOOOOOOOOOOOOOOOOOOOO");
+                        System.err.println(bc);
                     } catch (IllegalAccessException e) {
 						// TODO Auto-generated catch block
-                        log.error(e.getMessage(), e);
+                        e.printStackTrace();
 					} catch (IllegalArgumentException e) {
 						// TODO Auto-generated catch block
-                        log.error(e.getMessage(), e);
+                        e.printStackTrace();
 					} catch (InvocationTargetException e) {
 						// TODO Auto-generated catch block
-                        log.error(e.getMessage(), e);
+                        e.printStackTrace();
                     }
 					break;
 				}
 			}
 		}
-		log.debug("OOOOOOOOOOOOOOOOOOOOOOOOOOO");
+		System.err.println("OOOOOOOOOOOOOOOOOOOOOOOOOOO");
         return bc;
 	}
 
 	public static Container getUIContainer(AbstractBooklet booklet) throws InvocationTargetException, IllegalAccessException {
 
 		Method getUIContainer = null;
-        log.debug("OOOOOOOOOOOOOOOOOOOOOOOOOOO");
-		// Should be the only method returning a Container in BookletContext...
+        System.err.println("OOOOOOOOOOOOOOOOOOOOOOOOOOO");
+        // Should be the only method returning a Container in BookletContext...
 		Method[] methods = BookletContext.class.getDeclaredMethods();
 		for (int i = 0; i < methods.length; i++) {
 			if (methods[i].getReturnType() == Container.class) {
@@ -73,8 +77,8 @@ public class Util {
 				Class[] params = methods[i].getParameterTypes();
 				if (params.length == 0) {
 					getUIContainer = methods[i];
-                    log.debug("OOOOOOOOOOOOOOOOOOOOOOOOOOO");
-					break;
+                    System.err.println("OOOOOOOOOOOOOOOOOOOOOOOOOOO");
+                    break;
 				}
 			}
 		}
@@ -82,13 +86,13 @@ public class Util {
 
 		if (getUIContainer != null) {
 
-            log.debug("OOOOOOOOOOOOOOOOOOOOOOOOOOO");
-			//new Logger().append("Found getUIContainer method as " + getUIContainer.toString());
+            System.err.println("OOOOOOOOOOOOOOOOOOOOOOOOOOO");
+            //new Logger().append("Found getUIContainer method as " + getUIContainer.toString());
 			BookletContext bc = Util.obGetBookletContext(1, booklet);
-            log.debug("OOOOOOOOOOOOOOOOOOOOOOOOOOO");
-			Container rootContainer = (Container) getUIContainer.invoke(bc, null);
-            log.debug("OOOOOOOOOOOOOOOOOOOOOOOOOOO");
-			return rootContainer;
+            System.err.println("OOOOOOOOOOOOOOOOOOOOOOOOOOO");
+            Container rootContainer = (Container) getUIContainer.invoke(bc, null);
+            System.err.println("OOOOOOOOOOOOOOOOOOOOOOOOOOO");
+            return rootContainer;
 		}
 		else {
 			return null;
@@ -128,7 +132,7 @@ public class Util {
 				return json;
 			}
 			else {
-				log.error("Failed to find perform method, last access time won't be set on exit!");
+				System.err.println("Failed to find perform method, last access time won't be set on exit!");
 				return new JSONObject();
 			}
 		} catch (Throwable t) {
@@ -205,6 +209,22 @@ public class Util {
         }
     }
 
+    public static boolean isKindle() {
+        return kindle;
+    }
+
+    public static void setKindle(boolean kindleValue) {
+        kindle = kindleValue;
+    }
+
+    public static void setScreenResolution(int screenResolution) {
+        Util.screenResolution = screenResolution;
+    }
+
+    public static int getScreenResolution() {
+        return screenResolution;
+    }
+
     /**
      * Created by ieb on 09/06/2020.
      */
@@ -218,25 +238,43 @@ public class Util {
 
 
     public static void drawString(String s, int x, int y, Font font, HAlign halign, VAlign valign, Graphics2D g2) {
-        if ( s != null) {
+        if (s != null) {
+
             g2.setFont(font);
+            FontMetrics fontMetrics = g2.getFontMetrics();
+            int width = fontMetrics.stringWidth(s);
             Rectangle2D r = font.getStringBounds(s, g2.getFontRenderContext());
-            switch(halign) {
-                case CENTER: x = x - (int)r.getCenterX(); break;
-                case RIGHT: x = x - (int)r.getWidth(); break;
+            log.debug("Font h{} a{} d{} ", fontMetrics.getHeight(),
+                    fontMetrics.getAscent(),
+                    fontMetrics.getDescent());
+            log.debug("Width w{} ", width);
+            log.debug("Align {} {} {} ", halign, valign, font);
+
+            switch (halign) {
+                case CENTER:
+                    x = x - (int) width/2;
+                    break;
+                case RIGHT:
+                    x = x - (int) width;
+                    break;
             }
-            switch(valign) {
-                case CENTER: y = y - (int)(r.getCenterY()); break;
-                case TOP: y = y - (int)(r.getY()); break;
-                case BOTTOM: y = y - (int)(r.getY() + r.getHeight()); break;
+            switch (valign) {
+                case CENTER:
+                    y = y + (int) fontMetrics.getAscent()/2;
+                    break;
+                case TOP:
+                    y = y + (int) fontMetrics.getAscent();
+                    break;
+                case BOTTOM:
+                    y = y - fontMetrics.getDescent();
             }
+
+
+            log.debug("String pos x{} y{} ", x, y);
+            g2.clearRect(x, y - (int) fontMetrics.getAscent(),(int)r.getWidth(),(int)r.getHeight());
             g2.drawString(s, x, y);
-            //g2.drawRect(x,y+(int)r.getY(),(int)r.getWidth(),(int)r.getHeight());
         }
 
     }
-
-
-
 
 }
