@@ -20,7 +20,6 @@ Dont expect fantastic graphics animations. Kindle screens are great in full sunl
 and requires careful slow redrawing to avoid shadows and ink left behind. The Paperwhite 4 is IP68 waterproof and the battery
 lasts for many many hours. 
 
-![](screenshots/IMG_20200626_090416.jpg)
 ![](screenshots/IMG_20200626_090431.jpg)
 ![](screenshots/IMG_20200626_090444.jpg)
 ![](screenshots/IMG_20200626_090450.jpg)
