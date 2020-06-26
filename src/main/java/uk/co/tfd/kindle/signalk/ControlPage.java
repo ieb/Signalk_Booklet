@@ -7,8 +7,7 @@ import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.util.ArrayList;
 
 /**
@@ -92,8 +91,8 @@ public class ControlPage extends JPanel implements StatusUpdates.StatusUpdateLis
         statusMessages.setFont(new Font("Arial", Font.PLAIN, 8));
         statusMessages.setLineWrap(true);
         statusMessages.setEditable(false);
-        //statusMessages.setFocusable(false);
-        statusMessages.setEnabled(false);
+        statusMessages.setHighlighter(null);
+
         this.add(statusMessages, BorderLayout.CENTER);
 
         buttons = new ThemePanel(new BorderLayout());
@@ -102,8 +101,17 @@ public class ControlPage extends JPanel implements StatusUpdates.StatusUpdateLis
         this.add(buttons, BorderLayout.PAGE_END);
     }
 
+    @Override
+    public synchronized void addMouseListener(MouseListener l) {
+        statusMessages.addMouseListener(l);
+        super.addMouseListener(l);
+    }
 
-
+    @Override
+    public synchronized void addMouseMotionListener(MouseMotionListener l) {
+        statusMessages.addMouseMotionListener(l);
+        super.addMouseMotionListener(l);
+    }
 
     public void setTheme(MainScreen.Theme theme) {
         this.invertButton.setForeground(theme.getControlForeground());
@@ -130,6 +138,7 @@ public class ControlPage extends JPanel implements StatusUpdates.StatusUpdateLis
 
     @Override
     public void onStatusChange(String text) {
+        log.info("Status: {} ",text);
         statusMessages.append(text + "\n");
         Document d = statusMessages.getDocument();
 

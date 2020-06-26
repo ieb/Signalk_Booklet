@@ -1,6 +1,8 @@
 package uk.co.tfd.kindle.signalk;
 
 import org.json.simple.parser.ParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.io.IOException;
@@ -10,6 +12,8 @@ import java.util.Map;
  * Created by ieb on 20/06/2020.
  */
 public class MainScreen {
+
+    private static final Logger log = LoggerFactory.getLogger(MainScreen.class);
 
     public static class Theme {
         private final Color foreground;
@@ -89,7 +93,7 @@ public class MainScreen {
             Map<String, Object> screensize = (Map<String, Object>) config.get("screensize");
             if ( screensize != null) {
                 root.setSize(Integer.valueOf(String.valueOf(screensize.get("w")))/2, Integer.valueOf(String.valueOf(screensize.get("h")))/2);
-                System.err.println("Set Screensize to "+root.getSize());
+                log.info("Set Screensize to {} ", root.getSize());
             }
         }
         root.add(layout);

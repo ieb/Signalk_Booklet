@@ -15,6 +15,14 @@ import java.io.IOException;
  * Created by ieb on 06/06/2020.
  */
 public class Main {
+    static {
+        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "info");
+        System.setProperty("org.slf4j.simpleLogger.logFile","System.err");
+        System.setProperty("org.slf4j.simpleLogger.showDateTime","true");
+        System.setProperty("org.slf4j.simpleLogger.showShortLogName","true");
+        System.setProperty("org.slf4j.simpleLogger.dateTimeFormat","yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+
+    }
 
     private static final Logger log = LoggerFactory.getLogger(Main.class);
     private static Timer timer;
@@ -23,8 +31,6 @@ public class Main {
         Util.setKindle(false); // Kindle AWT implementation has some non standard behaviour.
         Util.setScreenResolution(Toolkit.getDefaultToolkit().getScreenResolution());
 
-        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "info");
-        System.setProperty("org.slf4j.simpleLogger.logFile","System.err");
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 600);

@@ -215,9 +215,9 @@ public class EInkTextBox extends JPanel implements Data.Listener<DataValue> {
                 RenderingHints.VALUE_ANTIALIAS_ON);
 
 
-        g2.drawRoundRect(0, 0, boxWidth, boxHeight, radius, radius);
 
         renderInstrument(g2);
+        g2.drawRoundRect(0, 0, boxWidth, boxHeight, radius, radius);
     }
 
     void drawBaseLine(String l, String r, Graphics2D g2) {

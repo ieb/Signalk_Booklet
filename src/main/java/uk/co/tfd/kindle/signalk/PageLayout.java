@@ -24,7 +24,7 @@ import java.util.Map;
 /**
  * Created by ieb on 20/06/2020.
  */
-public  class PageLayout extends JPanel {
+public  class PageLayout extends JPanel implements  MouseListener, MouseMotionListener {
     private static final Logger log = LoggerFactory.getLogger(PageLayout.class);
     private final Data.DisplayUnits displayUnits;
     private int pageNo;
@@ -95,104 +95,15 @@ public  class PageLayout extends JPanel {
         this.pageNo = 0;
         this.store = store;
         this.configFile = configFile;
-        this.addMouseListener(new MouseListener() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-                dragStartX = e.getX();
-                dragStartY = e.getY();
-                log.debug("Clicked {} ", dragStartX);
-                dragging = true;
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                log.debug("Released {} ", dragStartX);
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-
-            }
-        });
-        this.addMouseMotionListener(new MouseMotionListener() {
-            @Override
-            public void mouseDragged(MouseEvent e) {
-                if ( !dragging ) {
-                    log.debug("Not dragging");
-                    return;
-                }
-                int distanceX = e.getX() - dragStartX;
-                int distanceY = e.getY() - dragStartY;
-                log.debug("Dragging {} {}", distanceX, distanceY );
-                if (rotate) {
-                    if (distanceX < -200) {
-                        layout.show(PageLayout.this, "control");
-                        rotate = false;
-                        dragging = false;
-                    } else if (distanceY > 200) {
-                        pageNo--;
-                        if (pageNo < 0) {
-                            pageNo = pagesCount - 1;
-                        }
-                        layout.show(PageLayout.this, "page" + pageNo);
-                        rotate = Util.option(pageList.get(pageNo), "rotate", false);
-                        dragging = false;
-
-                    } else if (distanceY < -200) {
-                        pageNo++;
-                        if (pageNo == pagesCount) {
-                            pageNo = 0;
-                        }
-                        layout.show(PageLayout.this, "page" + pageNo);
-                        rotate = Util.option(pageList.get(pageNo), "rotate", false);
-                        dragging = false;
-                    }
-
-                } else {
-                    if (distanceY < -200) {
-                        layout.show(PageLayout.this, "control");
-                        rotate = false;
-                        dragging = false;
-                    } else if (distanceX < -200) {
-                        pageNo--;
-                        if (pageNo < 0) {
-                            pageNo = pagesCount - 1;
-                        }
-                        layout.show(PageLayout.this, "page" + pageNo);
-                        rotate = Util.option(pageList.get(pageNo), "rotate", false);
-                        dragging = false;
-
-                    } else if (distanceX > 200) {
-                        pageNo++;
-                        if (pageNo == pagesCount) {
-                            pageNo = 0;
-                        }
-                        layout.show(PageLayout.this, "page" + pageNo);
-                        rotate = Util.option(pageList.get(pageNo), "rotate", false);
-                        dragging = false;
-                    }
-                }
-            }
-
-            @Override
-            public void mouseMoved(MouseEvent e) {
-
-            }
-        });
+        this.addMouseListener(this);
+        this.addMouseMotionListener(this);
 
     }
 
     public void addControl(JPanel control) {
         this.control = control;
+        this.control.addMouseListener(this);
+        this.control.addMouseMotionListener(this);
         this.add("control", control);
     }
 
@@ -211,7 +122,6 @@ public  class PageLayout extends JPanel {
             log.info("Loading defaults ");
             configuration = (Map<String, Object>) jsonParser.parse(DEFAULT_LAYOUT);
         }
-        System.err.println(JSONObject.toJSONString(configuration));
         store.addConfiguration(configuration);
 
         refresh();
@@ -224,7 +134,96 @@ public  class PageLayout extends JPanel {
         return configuration;
     }
 
+    @Override
+    public void mouseClicked(MouseEvent e) {
+    }
 
+    @Override
+    public void mousePressed(MouseEvent e) {
+        dragStartX = e.getX();
+        dragStartY = e.getY();
+        log.debug("Clicked {} ", dragStartX);
+        dragging = true;
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        log.debug("Released {} ", dragStartX);
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        if ( !dragging ) {
+            log.debug("Not dragging");
+            return;
+        }
+        int distanceX = e.getX() - dragStartX;
+        int distanceY = e.getY() - dragStartY;
+        log.debug("Dragging {} {}", distanceX, distanceY );
+        if (rotate) {
+            if (distanceX < -200) {
+                layout.show(PageLayout.this, "control");
+                rotate = false;
+                dragging = false;
+            } else if (distanceY > 200) {
+                pageNo--;
+                if (pageNo < 0) {
+                    pageNo = pagesCount - 1;
+                }
+                layout.show(PageLayout.this, "page" + pageNo);
+                rotate = Util.option(pageList.get(pageNo), "rotate", false);
+                dragging = false;
+
+            } else if (distanceY < -200) {
+                pageNo++;
+                if (pageNo == pagesCount) {
+                    pageNo = 0;
+                }
+                layout.show(PageLayout.this, "page" + pageNo);
+                rotate = Util.option(pageList.get(pageNo), "rotate", false);
+                dragging = false;
+            }
+
+        } else {
+            if (distanceY < -200) {
+                layout.show(PageLayout.this, "control");
+                rotate = false;
+                dragging = false;
+            } else if (distanceX < -200) {
+                pageNo--;
+                if (pageNo < 0) {
+                    pageNo = pagesCount - 1;
+                }
+                layout.show(PageLayout.this, "page" + pageNo);
+                rotate = Util.option(pageList.get(pageNo), "rotate", false);
+                dragging = false;
+
+            } else if (distanceX > 200) {
+                pageNo++;
+                if (pageNo == pagesCount) {
+                    pageNo = 0;
+                }
+                layout.show(PageLayout.this, "page" + pageNo);
+                rotate = Util.option(pageList.get(pageNo), "rotate", false);
+                dragging = false;
+            }
+        }
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+
+    }
     private void refresh() {
 
         java.util.List<Map<String, Object>> pages = (java.util.List<Map<String, Object>>) configuration.get("pages");
@@ -252,7 +251,7 @@ public  class PageLayout extends JPanel {
                 for (int c = ncols-1 ; c >= 0; c--) {
                     for (int r = 0 ; r < nrows; r++) {
                         String name = grid.get(r).get(c);
-                        log.info("Adding Rotated {} {} {}  ", r, c, name);
+                        log.debug("Adding Rotated {} {} {}  ", r, c, name);
                         card.add(instruments.create(name, rotatePage, displayUnits, store), i++);
                     }
 
@@ -262,11 +261,12 @@ public  class PageLayout extends JPanel {
                 for (int r = 0 ; r < nrows; r++) {
                     for (int c = 0 ; c < ncols; c++) {
                         String name = grid.get(r).get(c);
-                        log.info("Adding {} {} {}  ", r, c,  name);
+                        log.debug("Adding {} {} {}  ", r, c, name);
                         card.add(instruments.create(name, rotatePage, displayUnits, store), i++);
                     }
                 }
             }
+            log.info("Loaded Page {} c{} r{} ", page.get("id"), ncols, nrows);
         }
     }
 

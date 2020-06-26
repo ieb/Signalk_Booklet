@@ -244,11 +244,6 @@ public class Util {
             FontMetrics fontMetrics = g2.getFontMetrics();
             int width = fontMetrics.stringWidth(s);
             Rectangle2D r = font.getStringBounds(s, g2.getFontRenderContext());
-            log.debug("Font h{} a{} d{} ", fontMetrics.getHeight(),
-                    fontMetrics.getAscent(),
-                    fontMetrics.getDescent());
-            log.debug("Width w{} ", width);
-            log.debug("Align {} {} {} ", halign, valign, font);
 
             switch (halign) {
                 case CENTER:
@@ -270,7 +265,6 @@ public class Util {
             }
 
 
-            log.debug("String pos x{} y{} ", x, y);
             g2.clearRect(x, y - (int) fontMetrics.getAscent(),(int)r.getWidth(),(int)r.getHeight());
             g2.drawString(s, x, y);
         }

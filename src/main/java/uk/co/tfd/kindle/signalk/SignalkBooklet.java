@@ -20,8 +20,10 @@ public class SignalkBooklet extends AbstractBooklet implements ActionListener {
 	// Handle the privilege hint prefix...
 	private static String PRIVILEGE_HINT_PREFIX = "?";
     static {
-        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "debug");
+        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "info");
         System.setProperty("org.slf4j.simpleLogger.logFile","/var/tmp/signalk.log");
+        System.setProperty("org.slf4j.simpleLogger.showDateTime","true");
+        System.setProperty("org.slf4j.simpleLogger.showShortLogName","true");
         log = LoggerFactory.getLogger(SignalkBooklet.class);
         Util.setKindle(true);
     }

@@ -200,7 +200,8 @@ public class SignalkTcpClient extends StatusUpdates implements ServiceListener {
                     socket = null;
                 } catch (Exception e) {
                     SignalkTcpClient.this.updateStatus("Connection Failed closing socket");
-                    log.error("Failed closing socket ", e);
+                    log.error("Failed closing socket {} ", e.getMessage());
+                    log.debug(e.getMessage(),e);
 
 
                     if ( socket != null ) {
