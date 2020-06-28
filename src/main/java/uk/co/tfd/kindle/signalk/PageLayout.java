@@ -123,6 +123,8 @@ public  class PageLayout extends JPanel implements  MouseListener, MouseMotionLi
             configuration = (Map<String, Object>) jsonParser.parse(DEFAULT_LAYOUT);
         }
         store.addConfiguration(configuration);
+        instruments.addConfiguration(configuration);
+
 
         refresh();
 

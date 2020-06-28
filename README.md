@@ -9,7 +9,9 @@ It recognises the mimetype of the "book" and launches the registered Booklet app
 reads the json inside the book file, configures the UI with pages of widgets (EInkTextBox.java).
 
 It then either starts network discovery using mDNS to find a Signalk server on the network, or attempts to connect to a 
-list of host port combinations from the book json. 
+list of host port combinations from the book json. Kindles come configured with an iptables firewall enabled by default. 
+This firewall only allows inbound packets destined for Amazons proprietary services when on the same network as other
+amazon devices. The iptables firewall blocks mDNS. Details on how to enable mDNS are below.
 
 When the booklet is running navigation is by finger swipes left and right to change pages.
 
@@ -96,4 +98,181 @@ are created.
 
 ## Booklets
 
-Create files in /mnt/us/documents called .signalk containing json (eg /mnt/us/documents/OnDeck.signalk), see src/test/resources/config.json for an example.
+Create files in /mnt/us/documents called .signalk containing json (eg /mnt/us/documents/OnDeck.signalk), 
+see src/test/resources/config.json for an example.
+
+## SignalK servers
+
+Statis configuration is achieved with a list of IP and ports in the json file. It will try each one in turn and connect to the first.
+Alternatively if you dont specify a list and fix the iptables firewall mDSN will work.
+
+To fix the firewall.
+
+    iptables -A INPUT   -m pkttype --pkt-type multicast -j ACCEPT
+    iptables -A FORWARD -m pkttype --pkt-type multicast -j ACCEPT
+    iptables -A OUTPUT  -m pkttype --pkt-type multicast -j ACCEPT
+    
+ to fix the firewall on restart
+ 
+ 
+     mntroot rw
+     vi /etc/sysconfig/iptables
+     
+     # Add the following lines in each chain
+     -A INPUT   -m pkttype --pkt-type multicast -j ACCEPT
+     -A FORWARD -m pkttype --pkt-type multicast -j ACCEPT
+     -A OUTPUT  -m pkttype --pkt-type multicast -j ACCEPT
+     
+     # save and mount root ro
+     
+     mntrood ro
+     
+  
+ # Customisation
+  
+ The app comes with a set of default datavalues and widgets, however you can configure more datavalues and attach widgets to them. 
+ DataValues have a path in the store which input values map to so that data updates with a matching
+ path are collected by the data value. Some datavalues may collect updates from multiple paths. The datavalue will have SI units, and a type that determines how its units are treated and displayed.
+
+ instruments display datavalues. An instrument has a key, a widget class and a path in the store that identifies which datavalue it displays.
+
+ Screens are built using default and custom instruments.
+
+
+ 
+ 
+     {
+          "servers" : [ // only required if mDNS is firewalled, otherwise omit.
+            {
+              "host": "192.168.4.1", // first server to probe
+              "port": 8375
+            },
+            {
+              "host": "192.168.1.134",
+              "port": 8375
+            },
+            {
+              "host": "x43543-3.local",
+              "port": 8375
+            }
+          ],
+
+         "datavalues": {  // customised data values
+             "temperature.engine" : { // primary key in store.
+                 "paths": [ // optional additonal paths, may be empty, but is required
+                         "additonalpath"
+                 ],
+                 "unit": "M", // units one of RAD, MS, RATIO,M, MAP, K, TEXT
+                 "dataType": "depth", // datatype one of SPEED, BEARING, DISTANCE, NONE, RELATIVEANGLE, LATITUDE, LONGITUDE, TEMPERATURE, PERCENTAGE, DEPTH
+                 "description": "example",
+                 "dataClass": "DoubleDataValue" // one of DataValue, DoubleDataValue, CircularDataValue,
+                                                // PilotDataValue, FixDataValue, PossitionDataValue, 
+                                                // CurrentDataValue, AttitudeDataValue
+             }
+         },
+         "instruments": { // customised instruments
+             "awscorrected": {
+                "widget": "EInkTemperature", // one of EInkTextBox, EInkAttitide, EInkBearing, EInkCurrent, EInkDepth, EInkDistance, 
+                // EInkLOg, EInkPilot, EInkPossiton, EInkRatio,
+                // EInkRelativeAngle, EInkSpeed, EInkTemperature
+                "path": "temperature.engine" // Path to data in datavalues.
+ 
+             }
+ 
+         }
+ 
+     }
+  "screensize": { "w":1072, "h":1448 }, // only for non kindle displays
+  "pages" : [  // list of pages
+    {
+        /*
+        the values of instruments may be one of the following and any custom instruments defined.
+
+        awa, Apparent Wind Angle
+        aws, Apparent Wind Speed
+        twa, True Wind Angle
+        tws, True Wind Speed
+        stw, Speed Through Water
+        dbt, Depth Below Transducer
+        vmg, Velocity Made good into or down wind.
+        var, Variation
+        hdt, Heading True
+        cogm, Course over ground magnetic
+        hdm, Heading True
+        lee, Leeway (angle)
+        pstw, Polar Speed Through Water
+        psratio, Polar Speed Ratio 
+        pvmg, Polar VMG
+        ttwa, target optional true wind angle upwind or downwind
+        tstw, target stw at ttwa
+        tvmg, target vmg at ttwa
+        pvmgr, polar vmg ratio
+        twdt, true wind direction true
+        twdm, true wind direction magnetic
+        tackt, heading on opposite tack true
+        tackm, heading on opposite tack magnetic
+        ophdm, target opposite heading true
+        cogt, course over ground true
+        rot, rate of turn
+        rudder, rudder angle
+        sog, speed over grount
+        twater, water temperature
+        stwref, stw sensor type
+        blank, blank widget
+        log,  log
+        attitude, pitch and roll
+        current, set and drift
+        fix, gps fix information
+        pilot, pilot information
+        position, possition 
+        */
+
+
+      "instruments" : [  // rows and columns of instruments, using custom and pre-defined widgets.
+        [ "awa", "twa", "stw", "psratio" ], 
+        [ "aws", "tws", "pstw", "pvmg" ], 
+        [ "cogt", "sog", "attitude", "lee" ], 
+        [ "position", "fix", "log", "dbt" ],
+        [ "position", "fix", "log", "dbt" ]
+      ],
+      "vspace" : 5, // space between widgets
+      "hspace" : 5,
+      "id" : "page1",  // page ID
+      "rotate": true // if true, rotate into landscape.
+    },
+    {
+      "vspace" : 5,
+      "instruments" : [
+        [ "awa" ],
+        [ "aws" ]
+      ],
+      "id" : "page2",
+      "hspace" : 5
+    },
+    {
+      "id" : "page3",
+      "hspace" : 5,
+      "vspace" : 5,
+      "instruments" : [
+        [ "awa", "twa" ],
+        [ "blank", "blank" ],
+        [ "blank", "blank" ],
+        [ "blank", "blank" ]
+      ]
+    },
+    {
+      "id" : "page6",
+      "hspace" : 5,
+      "vspace" : 5,
+      "rotate": true,
+      "instruments" : [
+        [ "awa", "twa" ],
+        [ "blank", "blank" ]
+      ]
+    }
+  ]
+
+
+
+
+  

@@ -19,6 +19,26 @@ public class Instruments {
     Map<String, Instrument> map = new HashMap<String, Instrument>();
 
 
+
+
+    public void addConfiguration(Map<String, Object> configuration) {
+        // any custom instruments here.
+        if (configuration.containsKey("instruments")) {
+            Map<String, Map<String, Object>> instruments = (Map<String, Map<String, Object>>) configuration.get("instruments");
+            for(Map.Entry<String, Map<String, Object>> e :  instruments.entrySet() ) {
+                Map<String, Object> instrument = e.getValue();
+                try {
+                    Class<? extends EInkTextBox> widgeClass = (Class<? extends EInkTextBox>) Class.forName("uk.co.tfd.kindle.signalk.widgets." + instrument.get("widget"));
+                    map.put(e.getKey(), new Instrument(e.getKey(), widgeClass, (String) instrument.get("path")));
+                } catch (Exception ex) {
+                    log.error("Failed to add {} {} ",e.getKey(), ex.getMessage());
+                    log.error(ex.getMessage(), ex);
+                }
+            }
+        }
+    }
+
+
     public static class Instrument<T extends EInkTextBox> {
         private final Class<T> widget;
         private final Map<String, Object> options;

@@ -3,17 +3,17 @@ package uk.co.tfd.kindle.signalk;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import uk.co.tfd.kindle.signalk.widgets.EInkTextBox;
 
 import javax.swing.*;
+import javax.swing.Timer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.reflect.Constructor;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by ieb on 10/06/2020.
@@ -450,8 +450,31 @@ public class Data {
             timer.stop();
         }
 
+
         public void addConfiguration(Map<String, Object> configuration) {
-            // add any custom configuration here
+            if (configuration.containsKey("datavalues")) {
+                Map<String, Map<String, Object>> instruments = (Map<String, Map<String, Object>>) configuration.get("datavalues");
+                for(Map.Entry<String, Map<String, Object>> e :  instruments.entrySet() ) {
+                    try {
+                        Map<String, Object> instrument = e.getValue();
+                        Unit units = Unit.valueOf((String) instrument.get("unit"));
+                        DataType dataType = DataType.valueOf((String) instrument.get("dataType"));
+                        String description = (String) instrument.get("description");
+                        DataKey k = new DataKey(e.getKey(), units, dataType, description);
+                        Class dataClass = Class.forName("uk.co.tfd.kindle.signalk.Data." + (String) instrument.get("dataClass"));
+                        Constructor constructor = dataClass.getConstructor(DataKey.class);
+                        DataValue dv = (DataValue) constructor.newInstance(k);
+                        state.put(e.getKey(), dv);
+                        List<String> paths = (List<String>) instrument.get("paths");
+                        for (String path : paths) {
+                            state.put(path, dv);
+                        }
+                    } catch (Exception ex) {
+                        log.error("Unable to create datavalue {} {} ",e.getKey(), ex.getMessage());
+                        log.error(ex.getMessage(), ex);
+                    }
+                }
+            }
         }
     }
 

@@ -252,7 +252,7 @@ public class EInkTextBox extends JPanel implements Data.Listener<DataValue> {
             Map<TextAttribute, Object> attrbutes = (Map<TextAttribute, Object>) largeFont.getAttributes();
             attrbutes.put(TextAttribute.SIZE, (float)(fontSize *(boxWidth *0.8)/rect.getWidth()) );
             Font f = new Font(attrbutes);
-            Util.drawString(this.out, boxWidth / 2, boxHeight / 2, f, Util.HAlign.CENTER , Util.VAlign.CENTER, g2);
+            Util.drawString(this.out,  boxWidth / 2, boxHeight / 2, f, Util.HAlign.CENTER , Util.VAlign.CENTER, g2);
         } else {
             Util.drawString(this.out, boxWidth / 2, boxHeight / 2, largeFont, Util.HAlign.CENTER, Util.VAlign.CENTER, g2);
         }
