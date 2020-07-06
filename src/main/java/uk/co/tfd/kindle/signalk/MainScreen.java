@@ -52,7 +52,7 @@ public class MainScreen {
     private int theme;
 
     private final Calcs calcs;
-    private final SignalkTcpClient sd;
+    private final SignalkTcpClient tcpClient;
     private final Data.Store store;
     private final PageLayout layout;
     private final ControlPage controlPage;
@@ -75,6 +75,7 @@ public class MainScreen {
 
             @Override
             public void exit() {
+                MainScreen.this.stop();
                 exitHook.exit();
             }
         });
@@ -103,14 +104,25 @@ public class MainScreen {
         calcs = new Calcs(store);
         calcs.addStatusUpdateListener(controlPage);
 
-        sd = new SignalkTcpClient(store, config);
-        sd.addStatusUpdateListener(controlPage);
+        SignalkHttpClient httpClient = new SignalkHttpClient(store);
+        tcpClient = new SignalkTcpClient(store, httpClient, config);
+        tcpClient.addStatusUpdateListener(controlPage);
+        httpClient.addStatusUpdateListener(controlPage);
+
+    }
+
+    public void stop() {
+        calcs.stop();
+        store.stop();
+        tcpClient.stop();
     }
 
 
     public void start() throws IOException {
-        calcs.start();
-        store.start();
-        sd.startDiscovery();
+        log.info("Starting");
+        calcs.start(); // No threads
+        store.start(); // AWT Timer
+        tcpClient.start(); // Thread
+        log.info("Started");
     }
 }

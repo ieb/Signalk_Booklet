@@ -15,6 +15,7 @@ import java.io.IOException;
  * Created by ieb on 06/06/2020.
  */
 public class Main {
+
     static {
         System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "info");
         System.setProperty("org.slf4j.simpleLogger.logFile","System.err");

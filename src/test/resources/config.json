@@ -1,55 +1,237 @@
 {
-  "disabled_servers" : [
+  "servers" : [
     {
       "host": "192.168.4.1",
-      "port": 8375
+      "port": 8375,
+      "url": "http://192.168.4.1:3001"
     },
     {
-      "host": "192.168.1.134",
-      "port": 8375
+      "host": "192.168.1.135",
+      "port": 8375,
+      "url": "http://192.168.1.135:3000"
     },
     {
       "host": "x43543-3.local",
-      "port": 8375
+      "port": 8375,
+      "url": "http://x43543-3.local:3000"
     }
   ],
   "screensize": { "w":1072, "h":1448 },
+
+   "datavalues": {  
+       "environment.outside.temperature" : { 
+           "paths": [],
+           "unit": "K",
+           "dataType": "TEMPERATURE",
+           "description": "Outside Temperature",
+           "dataClass": "DoubleDataValue"
+       },
+       "environment.wind.directionTrue" : {
+           "paths": [],
+           "unit": "RAD",
+           "dataType": "BEARING",
+           "description": "True Wind Direction",
+           "dataClass": "DoubleDataValue"
+       },
+       "environment.wind.directionGround" : {
+           "paths": [],
+           "unit": "RAD",
+           "dataType": "BEARING",
+           "description": "Ground Wind Direction",
+           "dataClass": "DoubleDataValue"
+       },
+       "environment.wind.angleGround" : {
+           "paths": [],
+           "unit": "RAD",
+           "dataType": "RELATIVEANGLE",
+           "description": "Ground Wind Angle",
+           "dataClass": "DoubleDataValue"
+       },
+       "environment.wind.angleTrue" : {
+           "paths": [],
+           "unit": "RAD",
+           "dataType": "RELATIVEANGLE",
+           "description": "True Wind Angle",
+           "dataClass": "DoubleDataValue"
+       },
+       "environment.wind.speedGround" : {
+           "paths": [],
+           "unit": "MS",
+           "dataType": "SPEED",
+           "description": "Ground Wind Speed",
+           "dataClass": "DoubleDataValue"
+       },
+       "environment.inside.mainCabin.temperature" : {
+           "paths": [],
+           "unit": "K",
+           "dataType": "TEMPERATURE",
+           "description": "Main Cabin Temperature",
+           "dataClass": "DoubleDataValue"
+       },
+       "environment.outside.humidity" : {
+           "paths": [],
+           "unit": "RH",
+           "dataType": "HUMIDITY",
+           "description": "Outside Humidity",
+           "dataClass": "DoubleDataValue"
+       },
+       "environment.outside.pressure" : {
+           "paths": [],
+           "unit": "PA",
+           "dataType": "ATMOSPHERICPRESSURE",
+           "description": "Outside Pressure",
+           "dataClass": "DoubleDataValue"
+       }
+   },
+
+    "instruments": { 
+       "airtemp": {
+          "widget": "EInkTemperature", 
+          "path": "environment.outside.temperature" 
+       },
+       "gwd": {
+          "widget": "EInkBearing", 
+          "path": "environment.wind.directionGround",
+       },
+       "gwa": {
+          "widget": "EInkRelativeAngle", 
+          "path": "environment.wind.angleGround",
+       },
+       "gwa": {
+          "widget": "EInkRelativeAngle", 
+          "path": "environment.wind.angleGround",
+       },
+       "gws": {
+          "widget": "EInkSpeed", 
+          "path": "environment.wind.speedGround",
+       },
+       "cabintemp": {
+          "widget": "EInkTemperature", 
+          "path": "environment.inside.mainCabin.temperature",
+       },
+       "%RH": {
+          "widget": "EInkRatio", 
+          "path": "environment.outside.humidity",
+       },
+       "pressure": {
+          "widget": "EInkAtmosphericPressure", 
+          "path": "environment.outside.pressure",
+       }
+   },
+  "comment" : "
+   
+        the values of instruments may be one of the following and any custom instruments defined.
+
+        awa, Apparent Wind Angle                 perf, sail
+        aws, Apparent Wind Speed                 perf, sail
+        twa, True Wind Angle                     perf, sail  
+        tws, True Wind Speed                     perf, wind, sail
+        stw, Speed Through Water                 perf, nav, sail
+        dbt, Depth Below Transducer              perf, sail
+        vmg, Velocity Made good into or down wind. perf, sail
+        var, Variation
+        hdt, Heading True
+        cogm, Course over ground magnetic        perf,nav
+        hdm, Heading magnetic                    nav
+        lee, Leeway (angle)                      perf
+        pstw, Polar Speed Through Water          perf
+        psratio, Polar Speed Ratio               perf 
+        pvmg, Polar VMG                          perf
+        ttwa, target optional true wind angle upwind or downwind perf
+        tstw, target stw at ttwa                 perf
+        tvmg, target vmg at ttwa                 perf
+        pvmgr, polar vmg ratio
+        twdt, true wind direction true,           wind
+        twdm, true wind direction magnetic,       wind
+        tackt, heading on opposite tack true
+        tackm, heading on opposite tack magnetic perf
+        ophdm, target opposite heading true
+        cogt, course over ground true
+        rot, rate of turn
+        rudder, rudder angle                     perf
+        sog, speed over grount                   perf, nav, sail
+        twater, water temperature                enviro
+        stwref, stw sensor type
+        blank, blank widget
+        log,  log                                nav
+        attitude, pitch and roll                 perf
+        current, set and drift                   current
+        fix, gps fix information                 nav
+        pilot, pilot information                 nav
+        position, possition                      perf, nav
+
+
+custom
+       airtemp, enviro
+       gwd, wind
+       gwa
+       gws, wind
+       cabintemp
+       %RH, enviro
+       pressure, enviro
+
+
+        ",
+
   "pages" : [
+
     {
       "instruments" : [
-        [ "awa", "twa", "stw", "psratio" ], 
-        [ "aws", "tws", "pstw", "pvmg" ], 
-        [ "cogt", "sog", "attitude", "lee" ], 
-        [ "position", "fix", "log", "dbt" ],
-        [ "position", "fix", "log", "dbt" ]
+        [ "airtemp", "pressure" ],  
+        [ "twater", "%RH" ]
       ],
       "vspace" : 5,
       "hspace" : 5,
-      "id" : "page1",
+      "id" : "enviro",
+      "rotate": true
+    },
+    {
+      "instruments" : [
+        [ "gwd", "gws" ],  
+        [ "twdt", "tws" ]
+      ],
+      "vspace" : 5,
+      "hspace" : 5,
+      "id" : "wind",
+      "rotate": true
+    },
+    {
+      "instruments" : [
+        [ "awa", "twa", "stw", "dbt" ], 
+        [ "aws", "tws", "pstw", "pvmg" ], 
+        [ "cogm", "sog", "attitude", "lee" ], 
+        [ "position", "current", "ttwa", "psratio" ],
+        [ "tackm", "hdm", "tstw", "rudder" ]
+      ],
+      "vspace" : 5,
+      "hspace" : 5,
+      "id" : "perf",
       "rotate": true
     },
     {
       "vspace" : 5,
       "instruments" : [
-        [ "awa" ],
-        [ "aws" ]
+        [ "position", "log" ],
+        [ "cogm", "sog" ],
+        [ "hdm", "stw" ],
+        [ "fix", "pilot" ]
       ],
-      "id" : "page2",
+      "id" : "nav",
       "hspace" : 5
     },
     {
-      "id" : "page3",
+      "id" : "sail",
       "hspace" : 5,
       "vspace" : 5,
       "instruments" : [
         [ "awa", "twa" ],
-        [ "blank", "blank" ],
-        [ "blank", "blank" ],
-        [ "blank", "blank" ]
+        [ "aws", "tws" ],
+        [ "stw", "vmg" ],
+        [ "dbt", "sog" ]
       ]
     },
     {
-      "id" : "page6",
+      "id" : "engine",
       "hspace" : 5,
       "vspace" : 5,
       "rotate": true,

@@ -73,6 +73,8 @@ public class Calcs extends StatusUpdates implements Data.Listener<Data.DataValue
         this.updateStatus("Performance Calcs ready");
     }
 
+    public void stop() {
+    }
 
 
 
@@ -133,6 +135,7 @@ public class Calcs extends StatusUpdates implements Data.Listener<Data.DataValue
         this.polar.calcPerformance(store);
 
     }
+
 
 
 

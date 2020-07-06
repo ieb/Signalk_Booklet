@@ -28,8 +28,10 @@ public class Instruments {
             for(Map.Entry<String, Map<String, Object>> e :  instruments.entrySet() ) {
                 Map<String, Object> instrument = e.getValue();
                 try {
-                    Class<? extends EInkTextBox> widgeClass = (Class<? extends EInkTextBox>) Class.forName("uk.co.tfd.kindle.signalk.widgets." + instrument.get("widget"));
-                    map.put(e.getKey(), new Instrument(e.getKey(), widgeClass, (String) instrument.get("path")));
+                    Class<? extends EInkTextBox> widgetClass = (Class<? extends EInkTextBox>) Class.forName("uk.co.tfd.kindle.signalk.widgets." + instrument.get("widget"));
+                    Instrument i = new Instrument(e.getKey(), widgetClass, (String) instrument.get("path"));
+                    map.put(e.getKey(), i);
+                    log.info("Added instrument {} {} ",e.getKey(), i);
                 } catch (Exception ex) {
                     log.error("Failed to add {} {} ",e.getKey(), ex.getMessage());
                     log.error(ex.getMessage(), ex);

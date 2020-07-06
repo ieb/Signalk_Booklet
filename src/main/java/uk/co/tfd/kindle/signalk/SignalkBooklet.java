@@ -24,6 +24,7 @@ public class SignalkBooklet extends AbstractBooklet implements ActionListener {
         System.setProperty("org.slf4j.simpleLogger.logFile","/var/tmp/signalk.log");
         System.setProperty("org.slf4j.simpleLogger.showDateTime","true");
         System.setProperty("org.slf4j.simpleLogger.showShortLogName","true");
+        System.setProperty("org.slf4j.simpleLogger.dateTimeFormat","yyyy-MM-dd'T'HH:mm:ss.SSSZ");
         log = LoggerFactory.getLogger(SignalkBooklet.class);
         Util.setKindle(true);
     }
@@ -33,10 +34,6 @@ public class SignalkBooklet extends AbstractBooklet implements ActionListener {
 
 
     private Container rootContainer = null;
-
-
-	private Component status = null;
-	private int depth = 0;
     private String configFile;
 
     public SignalkBooklet() {
@@ -53,20 +50,6 @@ public class SignalkBooklet extends AbstractBooklet implements ActionListener {
 
 	}
 
-    // Override obvuscated methods, this will change every time
-    // create(BookletContext bookletContext)
-    @Override
-    public void a(BookletContext bookletContext) {
-        log.info("create called with {} ", bookletContext);
-        super.a(bookletContext);
-    }
-
-    // setChromeHeaderRequest( (ChromeHeaderRequest chromeHeaderReques );
-    @Override
-    public void a(ChromeHeaderRequest chromeHeaderRequest) {
-        log.info("setChromeHeaderRequest called with {} ",chromeHeaderRequest);
-        super.a(chromeHeaderRequest);
-    }
 
     // 	public void start(URI contentURI)
     @Override
@@ -161,11 +144,14 @@ public class SignalkBooklet extends AbstractBooklet implements ActionListener {
 
 			@Override
 			public void exit() {
-				SignalkBooklet.this.endBooklet();
+
+                SignalkBooklet.this.endBooklet();
 			}
 		});
         listComponentTree(root,"->");
 		mainScreen.start();
+        // main screen is now referenced by Swing and a Thread.
+        // no refrence held here.
 	}
 
 

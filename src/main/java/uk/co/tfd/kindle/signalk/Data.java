@@ -21,11 +21,13 @@ import java.util.*;
 public class Data {
     
     public enum Unit {
-        RAD, MS, RATIO,M, MAP, K, TEXT
+        RAD, MS, RATIO,M, MAP, K, TEXT, PA, RH
     }
 
     public enum DataType {
-        SPEED, BEARING, DISTANCE, NONE, RELATIVEANGLE, LATITUDE, LONGITUDE, TEMPERATURE, PERCENTAGE, DEPTH
+        SPEED, BEARING, DISTANCE, NONE, RELATIVEANGLE, LATITUDE, LONGITUDE,
+         TEMPERATURE, PERCENTAGE, DEPTH, ATMOSPHERICPRESSURE, PRESSURE,
+        HUMIDITY
 
     }
 
@@ -254,6 +256,57 @@ public class Data {
             return DataType.PERCENTAGE;
         }
     }
+    public static class HumidityDisplay implements DataConversion {
+
+        @Override
+        public String convert(double value, DecimalFormat format) {
+            return format.format(value);
+        }
+
+        @Override
+        public DataType getDataType() {
+            return DataType.HUMIDITY;
+        }
+    }
+
+    public static class AtmosphericPressureDisplay implements DataConversion {
+
+        @Override
+        public String convert(double value, DecimalFormat format) {
+            return format.format(value*0.01);
+        }
+
+        @Override
+        public DataType getDataType() {
+            return DataType.ATMOSPHERICPRESSURE;
+        }
+    }
+
+    public static class PressureDisplay implements DataConversion {
+
+        @Override
+        public String convert(double value, DecimalFormat format) {
+            return format.format(value/100000.0);
+        }
+
+        @Override
+        public DataType getDataType() {
+            return DataType.PRESSURE;
+        }
+    }
+
+    public static class NoConversion implements DataConversion {
+
+        @Override
+        public String convert(double value, DecimalFormat format) {
+            return format.format(value);
+        }
+
+        @Override
+        public DataType getDataType() {
+            return DataType.NONE;
+        }
+    }
 
 
 
@@ -271,6 +324,9 @@ public class Data {
         displayUnits.add(new LongitudeDisplay());
         displayUnits.add(new TemperatureDisplay());
         displayUnits.add(new PercentageDisplay());
+        displayUnits.add(new HumidityDisplay());
+        displayUnits.add(new AtmosphericPressureDisplay());
+        displayUnits.add(new NoConversion());
         return displayUnits;
     }
 
@@ -461,7 +517,7 @@ public class Data {
                         DataType dataType = DataType.valueOf((String) instrument.get("dataType"));
                         String description = (String) instrument.get("description");
                         DataKey k = new DataKey(e.getKey(), units, dataType, description);
-                        Class dataClass = Class.forName("uk.co.tfd.kindle.signalk.Data." + (String) instrument.get("dataClass"));
+                        Class dataClass = Class.forName("uk.co.tfd.kindle.signalk.Data$" + (String) instrument.get("dataClass"));
                         Constructor constructor = dataClass.getConstructor(DataKey.class);
                         DataValue dv = (DataValue) constructor.newInstance(k);
                         state.put(e.getKey(), dv);
@@ -469,6 +525,7 @@ public class Data {
                         for (String path : paths) {
                             state.put(path, dv);
                         }
+                        log.info("Added Data Path {} {} ",e.getKey(),dv);
                     } catch (Exception ex) {
                         log.error("Unable to create datavalue {} {} ",e.getKey(), ex.getMessage());
                         log.error(ex.getMessage(), ex);
@@ -510,16 +567,14 @@ public class Data {
         public void updateTimestamp(String dateString) {
             SimpleDateFormat df = new SimpleDateFormat("yyy-MM-dd'T'hh:mm:ss.SSS");
             try {
-
-                if ( dateString == null) {
-                    log.warn("updateTimestamp() No timestamp found");
-                    this.timestamp = System.currentTimeMillis();
-                } else {
-                    this.timestamp = df.parse(dateString).getTime();
+                if ( dateString != null) {
+                    long ts = df.parse(dateString).getTime();
+                    if ( ts >  this.timestamp) {
+                        this.timestamp = ts;
+                    }
                 }
             } catch (ParseException e) {
                 log.error(e.getMessage(), e);
-                this.timestamp = System.currentTimeMillis();
             }
         }
 
@@ -850,7 +905,9 @@ public class Data {
             double newheading = this.heading;
             if ( path == null || this.key.id.equals(path)) {
                 newstate = Util.resolve(input, "state.value", this.state);
+                updateTimestamp(Util.resolve(input,"state.timestamp",null));
                 newheading = Util.resolve(input, "target.headingMagnetic.value", this.heading);
+                updateTimestamp(Util.resolve(input,"target.headingMagnetic.timestamp",null));
             } else if ( path.endsWith(".state")) {
                 newstate = Util.resolve(input, "value", this.state);
             } else if ( path.endsWith(".target.headingMagnetic")) {
@@ -897,10 +954,15 @@ public class Data {
             String newintegrity = this.integrity;
             if (path == null || key.id.equals(path)) {
                 newmethodQuality = Util.resolve(input, "methodQuality.value", this.methodQuality);
+                updateTimestamp(Util.resolve(input,"methodQuality.timestamp",null));
                 newhorizontalDilution = Util.resolve(input, "horizontalDilution.value", this.horizontalDilution);
+                updateTimestamp(Util.resolve(input,"horizontalDilution.timestamp",null));
                 newtype = Util.resolve(input, "type.value", this.type);
+                updateTimestamp(Util.resolve(input,"type.timestamp",null));
                 newsatellites = Util.resolve(input, "satellites.value", this.satellites);
+                updateTimestamp(Util.resolve(input,"satellites.timestamp",null));
                 newintegrity = Util.resolve(input, "integrity.value", this.integrity);
+                updateTimestamp(Util.resolve(input,"integrity.timestamp",null));
             } else if ( path.endsWith(".methodQuality")) {
                 newmethodQuality = Util.resolve(input, "value", this.methodQuality);
 
