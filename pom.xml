@@ -188,7 +188,7 @@
               <commandlineArgs>create ota2 -d paperwhite2 -d basic -d voyage -d paperwhite3
                 -d oasis -d basic2 -d oasis2 -d paperwhite4 -d basic3
                 -d oasis3 -O -s 3556150002 -C ${project.build.directory}/booklet/install
-                ${project.build.directory}/Update_Signalk_${project.artifactId}_hotfix_${buildNumber}_install.bin
+                ${project.build.directory}/Update_Signalk_${project.artifactId}_${buildNumber}_install-hotfix.bin
               </commandlineArgs>
             </configuration>
           </execution>

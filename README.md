@@ -8,12 +8,11 @@ Kindle UIs are Java Swing applications running inside a lightweight OSGi Framewo
 It recognises the mimetype of the "book" and launches the registered Booklet application (SignalkBooklet.java) which then 
 reads the json inside the book file, configures the UI with pages of widgets (EInkTextBox.java).
 
-It then either starts network discovery using mDNS to find a Signalk server on the network, or attempts to connect to a 
-list of host port combinations from the book json. Kindles come configured with an iptables firewall enabled by default. 
-This firewall only allows inbound packets destined for Amazons proprietary services when on the same network as other
-amazon devices. The iptables firewall blocks mDNS. Details on how to enable mDNS are below.
+It then either attempts to connect to a list of host port combinations from the book json. When 
+it connects it also fetches the current state from the Signalk REST API as TCP only provides
+updates and some slow polling sensors may not get an update for some time. (Perhaps SignalK  TCP should send the intial state on connect.)
 
-When the booklet is running navigation is by finger swipes left and right to change pages.
+When the booklet is running navigation is by finger swipes left and rig ht to change pages.
 
 Multiple books may be added to the kindle over the USB Mount, placed in the documents folder. see config.json for 
 an example of configuration.
@@ -103,29 +102,23 @@ see src/test/resources/config.json for an example.
 
 ## SignalK servers
 
-Statis configuration is achieved with a list of IP and ports in the json file. It will try each one in turn and connect to the first.
-Alternatively if you dont specify a list and fix the iptables firewall mDSN will work.
+By default the booklet will discover the Signalk server using mDNS, although if that doesnt work
+you can configutre a list of servers to try and connect to. The booklet will attempt to connect
+to each server in turn, backing off from failed servers for 30s. Process is displayed on the UI
+status screen with diagnostics going into the log file.
 
-To fix the firewall.
+For mDNS to work on the Kindle the IP firewall on the kindle must be adjusted to allow the multicast packets on port 5353 be be sent and recieved. If running on a isolated network with 
+no default router dont forget to add a default route to the routing table on the Signalk server 
+otherwise packets wont get routed off the signalk server. This can be done by making the 
+wifi network interface the router.
 
-    iptables -A INPUT   -m pkttype --pkt-type multicast -j ACCEPT
-    iptables -A FORWARD -m pkttype --pkt-type multicast -j ACCEPT
-    iptables -A OUTPUT  -m pkttype --pkt-type multicast -j ACCEPT
+For the kindle firewall append the following to the UDP rules and restart the firewall.
     
- to fix the firewall on restart
- 
- 
-     mntroot rw
-     vi /etc/sysconfig/iptables
-     
-     # Add the following lines in each chain
-     -A INPUT   -m pkttype --pkt-type multicast -j ACCEPT
-     -A FORWARD -m pkttype --pkt-type multicast -j ACCEPT
-     -A OUTPUT  -m pkttype --pkt-type multicast -j ACCEPT
-     
-     # save and mount root ro
-     
-     mntrood ro
+    -A INPUT   -m pkttype --pkt-type multicast -j ACCEPT
+    -A FORWARD -m pkttype --pkt-type multicast -j ACCEPT
+    -A OUTPUT  -m pkttype --pkt-type multicast -j ACCEP
+
+Once discovered the booklet will fetch the state of all data values every 5m from the http interface and process updates on the tcp port.
      
   
  # Customisation
@@ -142,21 +135,23 @@ To fix the firewall.
  
  
      {
-          "servers" : [ // only required if mDNS is firewalled, otherwise omit.
+        "servers" : [
             {
-              "host": "192.168.4.1", // first server to probe
-              "port": 8375
+              "host": "192.168.4.1", // TCP IP
+              "port": 8375, // TCP port
+              "url": "http://192.168.4.1:3001" // REST API
             },
             {
               "host": "192.168.1.134",
-              "port": 8375
+              "port": 8375,
+              "url": "http://192.168.1.134:3000"
             },
             {
               "host": "x43543-3.local",
-              "port": 8375
+              "port": 8375,
+              "url": "http://x43543-3.local:3000"
             }
           ],
-
          "datavalues": {  // customised data values
              "temperature.engine" : { // primary key in store.
                  "paths": [ // optional additonal paths, may be empty, but is required
@@ -271,6 +266,8 @@ To fix the firewall.
       ]
     }
   ]
+
+
 
 
 
