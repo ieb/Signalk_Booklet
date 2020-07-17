@@ -21,13 +21,13 @@ import java.util.*;
 public class Data {
     
     public enum Unit {
-        RAD, MS, RATIO,M, MAP, K, TEXT, PA, RH
+        RAD, MS, RATIO,M, MAP, K, TEXT, PA, RH,HZ, V, A
     }
 
     public enum DataType {
         SPEED, BEARING, DISTANCE, NONE, RELATIVEANGLE, LATITUDE, LONGITUDE,
          TEMPERATURE, PERCENTAGE, DEPTH, ATMOSPHERICPRESSURE, PRESSURE,
-        HUMIDITY
+        HUMIDITY, FREQUENCY, RPM, VOLTAGE, CURRENT
 
     }
 
@@ -295,6 +295,57 @@ public class Data {
         }
     }
 
+    public static class RpmDisplay implements DataConversion {
+
+        @Override
+        public String convert(double value, DecimalFormat format) {
+            return format.format(value*60.0);
+        }
+
+        @Override
+        public DataType getDataType() {
+            return DataType.RPM;
+        }
+    }
+
+    public static class FrequencyDisplay implements DataConversion {
+
+        @Override
+        public String convert(double value, DecimalFormat format) {
+            return format.format(value);
+        }
+
+        @Override
+        public DataType getDataType() {
+            return DataType.FREQUENCY;
+        }
+    }
+    public static class VoltageDisplay implements DataConversion {
+
+        @Override
+        public String convert(double value, DecimalFormat format) {
+            return format.format(value);
+        }
+
+        @Override
+        public DataType getDataType() {
+            return DataType.VOLTAGE;
+        }
+    }
+
+    public static class CurrentDisplay implements DataConversion {
+
+        @Override
+        public String convert(double value, DecimalFormat format) {
+            return format.format(value);
+        }
+
+        @Override
+        public DataType getDataType() {
+            return DataType.CURRENT;
+        }
+    }
+
     public static class NoConversion implements DataConversion {
 
         @Override
@@ -326,6 +377,10 @@ public class Data {
         displayUnits.add(new PercentageDisplay());
         displayUnits.add(new HumidityDisplay());
         displayUnits.add(new AtmosphericPressureDisplay());
+        displayUnits.add(new RpmDisplay());
+        displayUnits.add(new FrequencyDisplay());
+        displayUnits.add(new VoltageDisplay());
+        displayUnits.add(new CurrentDisplay());
         displayUnits.add(new NoConversion());
         return displayUnits;
     }

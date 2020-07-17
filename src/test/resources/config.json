@@ -18,106 +18,200 @@
   ],
   "screensize": { "w":1072, "h":1448 },
 
-   "datavalues": {  
-       "environment.outside.temperature" : { 
-           "paths": [],
-           "unit": "K",
-           "dataType": "TEMPERATURE",
-           "description": "Outside Temperature",
-           "dataClass": "DoubleDataValue"
-       },
-       "environment.wind.directionTrue" : {
-           "paths": [],
-           "unit": "RAD",
-           "dataType": "BEARING",
-           "description": "True Wind Direction",
-           "dataClass": "DoubleDataValue"
-       },
-       "environment.wind.directionGround" : {
-           "paths": [],
-           "unit": "RAD",
-           "dataType": "BEARING",
-           "description": "Ground Wind Direction",
-           "dataClass": "DoubleDataValue"
-       },
-       "environment.wind.angleGround" : {
-           "paths": [],
-           "unit": "RAD",
-           "dataType": "RELATIVEANGLE",
-           "description": "Ground Wind Angle",
-           "dataClass": "DoubleDataValue"
-       },
-       "environment.wind.angleTrue" : {
-           "paths": [],
-           "unit": "RAD",
-           "dataType": "RELATIVEANGLE",
-           "description": "True Wind Angle",
-           "dataClass": "DoubleDataValue"
-       },
-       "environment.wind.speedGround" : {
-           "paths": [],
-           "unit": "MS",
-           "dataType": "SPEED",
-           "description": "Ground Wind Speed",
-           "dataClass": "DoubleDataValue"
-       },
-       "environment.inside.mainCabin.temperature" : {
-           "paths": [],
-           "unit": "K",
-           "dataType": "TEMPERATURE",
-           "description": "Main Cabin Temperature",
-           "dataClass": "DoubleDataValue"
-       },
-       "environment.outside.humidity" : {
-           "paths": [],
-           "unit": "RH",
-           "dataType": "HUMIDITY",
-           "description": "Outside Humidity",
-           "dataClass": "DoubleDataValue"
-       },
-       "environment.outside.pressure" : {
-           "paths": [],
-           "unit": "PA",
-           "dataType": "ATMOSPHERICPRESSURE",
-           "description": "Outside Pressure",
-           "dataClass": "DoubleDataValue"
-       }
-   },
-
-    "instruments": { 
-       "airtemp": {
-          "widget": "EInkTemperature", 
-          "path": "environment.outside.temperature" 
-       },
-       "gwd": {
-          "widget": "EInkBearing", 
-          "path": "environment.wind.directionGround",
-       },
-       "gwa": {
-          "widget": "EInkRelativeAngle", 
-          "path": "environment.wind.angleGround",
-       },
-       "gwa": {
-          "widget": "EInkRelativeAngle", 
-          "path": "environment.wind.angleGround",
-       },
-       "gws": {
-          "widget": "EInkSpeed", 
-          "path": "environment.wind.speedGround",
-       },
-       "cabintemp": {
-          "widget": "EInkTemperature", 
-          "path": "environment.inside.mainCabin.temperature",
-       },
-       "%RH": {
-          "widget": "EInkRatio", 
-          "path": "environment.outside.humidity",
-       },
-       "pressure": {
-          "widget": "EInkAtmosphericPressure", 
-          "path": "environment.outside.pressure",
-       }
-   },
+  "datavalues": {  
+    "environment.outside.temperature" : { 
+      "paths": [],
+      "unit": "K",
+      "dataType": "TEMPERATURE",
+      "description": "Outside Temperature",
+      "dataClass": "DoubleDataValue"
+    },
+    "environment.wind.directionTrue" : {
+      "paths": [],
+      "unit": "RAD",
+      "dataType": "BEARING",
+      "description": "True Wind Direction",
+      "dataClass": "DoubleDataValue"
+    },
+    "environment.wind.directionGround" : {
+      "paths": [],
+      "unit": "RAD",
+      "dataType": "BEARING",
+      "description": "Ground Wind Direction",
+      "dataClass": "DoubleDataValue"
+    },
+    "environment.wind.angleGround" : {
+      "paths": [],
+      "unit": "RAD",
+      "dataType": "RELATIVEANGLE",
+      "description": "Ground Wind Angle",
+      "dataClass": "DoubleDataValue"
+    },
+    "environment.wind.angleTrue" : {
+      "paths": [],
+      "unit": "RAD",
+      "dataType": "RELATIVEANGLE",
+      "description": "True Wind Angle",
+      "dataClass": "DoubleDataValue"
+    },
+    "environment.wind.speedGround" : {
+      "paths": [],
+      "unit": "MS",
+      "dataType": "SPEED",
+      "description": "Ground Wind Speed",
+      "dataClass": "DoubleDataValue"
+    },
+    "environment.inside.mainCabin.temperature" : {
+      "paths": [],
+      "unit": "K",
+      "dataType": "TEMPERATURE",
+      "description": "Main Cabin Temperature",
+      "dataClass": "DoubleDataValue"
+    },
+    "environment.outside.humidity" : {
+      "paths": [],
+      "unit": "RH",
+      "dataType": "HUMIDITY",
+      "description": "Outside Humidity",
+      "dataClass": "DoubleDataValue"
+    },
+    "environment.outside.pressure" : {
+      "paths": [],
+      "unit": "PA",
+      "dataType": "ATMOSPHERICPRESSURE",
+      "description": "Outside Pressure",
+      "dataClass": "DoubleDataValue"
+    },
+    "propulsion.mainEngine.temperature" : {
+      "paths": [],
+      "unit": "K",
+      "dataType": "TEMPERATURE",
+      "description": "Engine Temperature",
+      "dataClass": "DoubleDataValue"
+    },
+    "propulsion.mainEngine.revolutions" : {
+      "paths": [],
+      "unit": "HZ",
+      "dataType": "FREQUENCY",
+      "description": "Engine RPM",
+      "dataClass": "DoubleDataValue"
+    },
+    "propulsion.mainEngine.exhaustTemperature" : {
+      "paths": [],
+      "unit": "K",
+      "dataType": "TEMPERATURE",
+      "description": "Engine Exhaust Temperature",
+      "dataClass": "DoubleDataValue"
+    },
+    "propulsion.mainEngine.alternatorVoltage" : {
+      "paths": [],
+      "unit": "V",
+      "dataType": "VOLTAGE",
+      "description": "Engine Alternator Voltage",
+      "dataClass": "DoubleDataValue"
+    },
+    "electrical.alternators.12V.temperature" : {
+      "paths": [],
+      "unit": "K",
+      "dataType": "TEMPERATURE",
+      "description": "Engine Alternator Temperature",
+      "dataClass": "DoubleDataValue"
+    },
+    "electrical.batteries.engine.voltage" : {
+      "paths": [],
+      "unit": "V",
+      "dataType": "VOLTAGE",
+      "description": "Engine Battery Voltage",
+      "dataClass": "DoubleDataValue"
+    },
+    "electrical.batteries.service.voltage" : {
+      "paths": [],
+      "unit": "V",
+      "dataType": "VOLTAGE",
+      "description": "Service Battery Voltage",
+      "dataClass": "DoubleDataValue"
+    },
+    "electrical.chargers.12V.temperature" : {
+      "paths": [],
+      "unit": "K",
+      "dataType": "TEMPERATURE",
+      "description": "12V Charger Temperature",
+      "dataClass": "DoubleDataValue"
+    },
+      "electrical.fridge.main.temperature" : {
+      "paths": [],
+      "unit": "K",
+      "dataType": "TEMPERATURE",
+      "description": "Fridge Temperature",
+      "dataClass": "DoubleDataValue"
+    }
+  },
+  "instruments": { 
+    "airtemp": {
+      "widget": "EInkTemperature", 
+      "path": "environment.outside.temperature" 
+    },
+    "gwd": {
+      "widget": "EInkBearing", 
+      "path": "environment.wind.directionGround",
+    },
+    "gwa": {
+      "widget": "EInkRelativeAngle", 
+      "path": "environment.wind.angleGround",
+    },
+    "gws": {
+      "widget": "EInkSpeed", 
+      "path": "environment.wind.speedGround",
+    },
+    "cabintemp": {
+      "widget": "EInkTemperature", 
+      "path": "environment.inside.mainCabin.temperature",
+    },
+    "%RH": {
+      "widget": "EInkRatio", 
+      "path": "environment.outside.humidity",
+    },
+    "pressure": {
+      "widget": "EInkAtmosphericPressure", 
+      "path": "environment.outside.pressure",
+    },
+    "coolant": {
+      "widget": "EInkTemperature", 
+      "path": "propulsion.mainEngine.temperature"
+    },
+    "rpm": {
+        "widget": "EInkRpm", 
+        "path": "propulsion.mainEngine.revolutions"
+    },
+    "exhaust": {
+        "widget": "EInkTemperature", 
+        "path": "propulsion.mainEngine.exhaustTemperature"
+    },
+    "alternator V": {
+      "widget": "EInkVoltage", 
+      "path": "propulsion.mainEngine.alternatorVoltage"
+    },
+    "alternator T": {
+      "widget": "EInkTemperature", 
+      "path": "electrical.alternators.12V.temperature"
+    },
+    "Engine V": {
+      "widget": "EInkVoltage", 
+      "path": "electrical.batteries.engine.voltage"
+    },
+    "Service V": {
+      "widget": "EInkVoltage", 
+      "path": "electrical.batteries.service.voltage"
+    },
+    "Charger T": {
+      "widget": "EInkTemperature", 
+      "path": "electrical.chargers.12V.temperature"
+    },
+    "Fridge T": {
+      "widget": "EInkTemperature", 
+      "path": "electrical.fridge.main.temperature"
+    }
+  },
   "comment" : "
    
         the values of instruments may be one of the following and any custom instruments defined.
@@ -236,8 +330,9 @@ custom
       "vspace" : 5,
       "rotate": true,
       "instruments" : [
-        [ "awa", "twa" ],
-        [ "blank", "blank" ]
+        [ "rpm", "alternator V", "alternator T" ],
+        [ "coolant", "Engine V", "Charger T" ],
+        [ "exhaust", "Service V", "Fridge T" ]
       ]
     }
   ]
